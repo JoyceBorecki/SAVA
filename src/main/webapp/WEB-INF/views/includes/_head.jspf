@@ -1,0 +1,44 @@
+<%-- FILE: /WEB-INF/views/includes/_head.jspf --%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>
+  <c:out value="${pageTitle}" />
+  <c:if test="${empty pageTitle}">Sistema de Avaliação Acadêmica</c:if>
+</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/app.css" />
+<style>
+  :root{
+    --app-bg:#EEF2F7;
+    --card-bg:#FFFFFF;
+    --card-radius:12px;
+    --card-shadow:0 10px 30px rgba(15,23,42,0.06);
+
+    --brand:#0C4DB2;
+    --brand-hover:#0A4193;
+
+    --text-default:#374151;
+    --text-heading:#0E2A5E;
+    --text-subtle:#6B7280;
+
+    --disabled-bg:#E5E7EB;
+    --disabled-text:#9CA3AF;
+
+    --input-bg:#F3F5F8;
+    --input-border:transparent;
+    --input-focus:#2F6FDB;
+    --input-glow:rgba(47,111,219,0.15);
+
+    --badge-green-bg:#E9F7EF;
+    --badge-green-text:#22A06B;
+    --badge-orange-bg:#FFF3E0;
+    --badge-orange-text:#E68A00;
+
+    --divider:#E6E9EF;
+
+    --container-max:1100px;
+  }
+</style>

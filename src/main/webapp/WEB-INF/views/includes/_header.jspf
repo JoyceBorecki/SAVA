@@ -1,0 +1,37 @@
+<%-- FILE: /WEB-INF/views/includes/_header.jspf --%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%-- CORREÇÃO: Força a codificação UTF-8 --%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<header class="app-header">
+  <div class="header-inner">
+    <a class="brand" href="${pageContext.request.contextPath}/dashboard">
+      <span class="brand-icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <circle cx="32" cy="32" r="30" fill="#0C4DB2" opacity="0.12"/>
+          <path d="M8 24l24-10 24 10-24 10L8 24z" fill="#0C4DB2"/>
+          <path d="M20 30v8c0 2.21 5.37 6 12 6s12-3.79 12-6v-8" stroke="#0C4DB2" stroke-width="2" fill="none"/>
+          <circle cx="32" cy="22" r="2" fill="#0C4DB2"/>
+        </svg>
+      </span>
+      <span class="brand-text">Sistema de Avaliação Acadêmica</span>
+    </a>
+    
+    <nav class="main-nav" aria-label="Principal">
+      
+      <%-- Link principal para o Dashboard do Aluno --%>
+      <a href="${pageContext.request.contextPath}/dashboard" class="nav-link <c:out value='${currentNav=="avaliacoes"?"active":""}'/>">Minhas Avaliações</a>
+      
+      <%-- Links da Área Administrativa (Gerenciamento) --%>
+      <a href="${pageContext.request.contextPath}/formularios" class="nav-link">Formulários</a>
+      <a href="${pageContext.request.contextPath}/processos" class="nav-link">Processos</a>
+      <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
+      <a href="${pageContext.request.contextPath}/disciplinas" class="nav-link">Disciplinas</a>
+      <a href="${pageContext.request.contextPath}/cursos" class="nav-link">Cursos</a>
+      <a href="${pageContext.request.contextPath}/usuarios" class="nav-link">Usuários</a>
+      
+      
+       <a href="${pageContext.request.contextPath}/login" class="nav-link">Sair</a>
+    </nav>
+  </div>
+  <div class="header-divider" aria-hidden="true"></div>
+</header>

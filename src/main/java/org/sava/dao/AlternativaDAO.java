@@ -2,18 +2,18 @@ package org.sava.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.sava.model.Perfil;
+import org.sava.model.Alternativa;
 import org.sava.util.HibernateUtil;
 
 import java.util.List;
 
-public class PerfilDAO {
+public class AlternativaDAO {
 
-    public void salvar(Perfil perfil) {
+    public void salvar(Alternativa alternativa) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.persist(perfil);
+            session.persist(alternativa);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -21,23 +21,25 @@ public class PerfilDAO {
         }
     }
 
-    public Perfil buscarPorId(int id) {
+    public Alternativa buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Perfil.class, id);
+            return session.get(Alternativa.class, id);
         }
     }
 
-    public List<Perfil> listar() {
+    public List<Alternativa> listarPorQuestaoId(int questaoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Perfil", Perfil.class).list();
+            return session.createQuery("from Alternativa where questao.id = :id", Alternativa.class)
+                    .setParameter("id", questaoId)
+                    .list();
         }
     }
 
-    public void atualizar(Perfil perfil) {
+    public void atualizar(Alternativa alternativa) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.merge(perfil);
+            session.merge(alternativa);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -49,23 +51,12 @@ public class PerfilDAO {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Perfil perfil = session.get(Perfil.class, id);
-            if (perfil != null) session.remove(perfil);
+            Alternativa alternativa = session.get(Alternativa.class, id);
+            if (alternativa != null) session.remove(alternativa);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Busca um perfil pelo nome. Essencial para a inicialização e Servlets.
-     */
-    public Perfil buscarPorNome(String nome) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Perfil where nome = :nome", Perfil.class)
-                    .setParameter("nome", nome)
-                    .uniqueResult();
         }
     }
 }

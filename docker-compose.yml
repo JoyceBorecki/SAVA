@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   mysql:
     image: mysql:8.0
@@ -15,13 +13,11 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: sava_phpmyadmin
+  adminer:
+    image: adminer:latest # Imagem mais leve
+    container_name: sava_adminer
     restart: always
     ports:
-      - "8081:80"
-    environment:
-      PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: root
+      - "8081:8080" # A porta interna do Adminer é 8080
+    depends_on: # Garante que o mysql inicie antes
+      - mysql

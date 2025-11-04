@@ -2,17 +2,18 @@ package org.sava.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.sava.model.Usuario;
+import org.sava.model.Avaliacao;
 import org.sava.util.HibernateUtil;
 
 import java.util.List;
 
-public class UsuarioDAO {
-    public void salvar(Usuario usuario) {
+public class AvaliacaoDAO {
+
+    public void salvar(Avaliacao avaliacao) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.persist(usuario);
+            session.persist(avaliacao);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -20,23 +21,24 @@ public class UsuarioDAO {
         }
     }
 
-    public Usuario buscarPorId(int id) {
+    public Avaliacao buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Usuario.class, id);
+            return session.get(Avaliacao.class, id);
         }
     }
 
-    public List<Usuario> listar() {
+    public List<Avaliacao> listar() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Usuario", Usuario.class).list();
+            // Traz a avaliação já com o formulário e a turma
+            return session.createQuery("from Avaliacao a join fetch a.formulario join fetch a.turma", Avaliacao.class).list();
         }
     }
 
-    public void atualizar(Usuario usuario) {
+    public void atualizar(Avaliacao avaliacao) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.merge(usuario);
+            session.merge(avaliacao);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -48,8 +50,8 @@ public class UsuarioDAO {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Usuario usuario = session.get(Usuario.class, id);
-            if (usuario != null) session.remove(usuario);
+            Avaliacao avaliacao = session.get(Avaliacao.class, id);
+            if (avaliacao != null) session.remove(avaliacao);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -57,11 +59,11 @@ public class UsuarioDAO {
         }
     }
 
-    public void salvarOuAtualizar(Usuario usuario) {
+    public void salvarOuAtualizar(Avaliacao avaliacao) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.merge(usuario); // merge = faz insert ou update automaticamente
+            session.merge(avaliacao);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -69,20 +71,27 @@ public class UsuarioDAO {
         }
     }
 
-
     /**
-     * Novo método para o LoginServlet.
-     * Busca um usuário pelo seu e-mail.
+     * Novo método para o DashboardServlet.
+     * Lista todas as avaliações (Formulario + Turma)
+     * às quais um aluno específico está vinculado (via matrícula na turma).
+     * RF12 - Aluno deve ter acesso apenas às avaliações das turmas em que está matriculado.
      */
-    public Usuario buscarPorEmail(String email) {
+    public List<Avaliacao> listarPorAlunoId(int alunoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Usuario where email = :email", Usuario.class)
-                    .setParameter("email", email)
-                    .uniqueResult(); // Retorna o usuário ou null se não encontrar
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            // Este HQL navega:
+            // 1. Começa em Avaliacao (a)
+            // 2. Entra em Turma (a.turma t)
+            // 3. Entra na lista de alunos da turma (t.alunos aluno)
+            // 4. Filtra onde o id do aluno bate
+            return session.createQuery(
+                "select distinct a from Avaliacao a " +
+                "join fetch a.formulario " +
+                "join fetch a.turma t " +
+                "join t.alunos aluno " +
+                "where aluno.id = :alunoId", Avaliacao.class)
+                .setParameter("alunoId", alunoId)
+                .list();
         }
     }
-
 }

@@ -2,17 +2,18 @@ package org.sava.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.sava.model.Usuario;
+import org.sava.model.Questao;
 import org.sava.util.HibernateUtil;
 
 import java.util.List;
 
-public class UsuarioDAO {
-    public void salvar(Usuario usuario) {
+public class QuestaoDAO {
+
+    public void salvar(Questao questao) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.persist(usuario);
+            session.persist(questao);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -20,23 +21,38 @@ public class UsuarioDAO {
         }
     }
 
-    public Usuario buscarPorId(int id) {
+    public Questao buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Usuario.class, id);
+            // Inclui fetch join para o formulário e alternativas
+            return session.createQuery(
+                "from Questao q left join fetch q.alternativas left join fetch q.formulario where q.id = :id", Questao.class)
+                .setParameter("id", id)
+                .uniqueResult();
         }
     }
 
-    public List<Usuario> listar() {
+    /**
+     * CORRIGIDO: Usa FETCH JOIN para carregar as alternativas, evitando LazyInitializationException.
+     */
+    public List<Questao> listarPorFormularioId(int formularioId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Usuario", Usuario.class).list();
+             return session.createQuery(
+                "select distinct q from Questao q " + 
+                "left join fetch q.alternativas " + 
+                "where q.formulario.id = :id " +
+                "order by q.id", Questao.class)
+                .setParameter("id", formularioId)
+                .list();
         }
     }
+    
+    // ... (restante do código) ...
 
-    public void atualizar(Usuario usuario) {
+    public void atualizar(Questao questao) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.merge(usuario);
+            session.merge(questao);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -48,8 +64,8 @@ public class UsuarioDAO {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Usuario usuario = session.get(Usuario.class, id);
-            if (usuario != null) session.remove(usuario);
+            Questao questao = session.get(Questao.class, id);
+            if (questao != null) session.remove(questao);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -57,32 +73,15 @@ public class UsuarioDAO {
         }
     }
 
-    public void salvarOuAtualizar(Usuario usuario) {
+    public void salvarOuAtualizar(Questao questao) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.merge(usuario); // merge = faz insert ou update automaticamente
+            session.merge(questao);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
         }
     }
-
-
-    /**
-     * Novo método para o LoginServlet.
-     * Busca um usuário pelo seu e-mail.
-     */
-    public Usuario buscarPorEmail(String email) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Usuario where email = :email", Usuario.class)
-                    .setParameter("email", email)
-                    .uniqueResult(); // Retorna o usuário ou null se não encontrar
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 }

@@ -2,18 +2,18 @@ package org.sava.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.sava.model.Perfil;
+import org.sava.model.Turma;
 import org.sava.util.HibernateUtil;
 
 import java.util.List;
 
-public class PerfilDAO {
+public class TurmaDAO {
 
-    public void salvar(Perfil perfil) {
+    public void salvar(Turma turma) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.persist(perfil);
+            session.persist(turma);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -21,23 +21,31 @@ public class PerfilDAO {
         }
     }
 
-    public Perfil buscarPorId(int id) {
+    public Turma buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Perfil.class, id);
+            // Busca a turma e já carrega as listas de professores e alunos
+            return session.createQuery(
+                "from Turma t " +
+                "left join fetch t.professores " +
+                "left join fetch t.alunos " +
+                "where t.id = :id", Turma.class)
+                .setParameter("id", id)
+                .uniqueResult();
         }
     }
 
-    public List<Perfil> listar() {
+    public List<Turma> listar() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Perfil", Perfil.class).list();
+            // Lista todas as turmas
+            return session.createQuery("from Turma", Turma.class).list();
         }
     }
 
-    public void atualizar(Perfil perfil) {
+    public void atualizar(Turma turma) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.merge(perfil);
+            session.merge(turma);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -49,8 +57,8 @@ public class PerfilDAO {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            Perfil perfil = session.get(Perfil.class, id);
-            if (perfil != null) session.remove(perfil);
+            Turma turma = session.get(Turma.class, id);
+            if (turma != null) session.remove(turma);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -58,14 +66,15 @@ public class PerfilDAO {
         }
     }
 
-    /**
-     * Busca um perfil pelo nome. Essencial para a inicialização e Servlets.
-     */
-    public Perfil buscarPorNome(String nome) {
+    public void salvarOuAtualizar(Turma turma) {
+        Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Perfil where nome = :nome", Perfil.class)
-                    .setParameter("nome", nome)
-                    .uniqueResult();
+            tx = session.beginTransaction();
+            session.merge(turma); // Usa merge para salvar ou atualizar
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
         }
     }
 }

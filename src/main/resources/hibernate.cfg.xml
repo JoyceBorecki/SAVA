@@ -2,6 +2,7 @@
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
@@ -10,12 +11,27 @@
         </property>
         <property name="hibernate.connection.username">sava_user</property>
         <property name="hibernate.connection.password">sava_pass</property>
+        
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
+
         <mapping class="org.sava.model.Usuario"/>
         <mapping class="org.sava.model.Perfil"/>
         <mapping class="org.sava.model.Curso"/>
+        
+        <mapping class="org.sava.model.Disciplina"/>
+        <mapping class="org.sava.model.Turma"/>
+        
+        <mapping class="org.sava.model.ProcessoAvaliativo"/>
+        <mapping class="org.sava.model.Formulario"/>
+        <mapping class="org.sava.model.Questao"/>
+        <mapping class="org.sava.model.Alternativa"/>
+        
+        <mapping class="org.sava.model.Avaliacao"/>
+        <mapping class="org.sava.model.AvaliacaoRespondida"/>
+        <mapping class="org.sava.model.Resposta"/>
+        
     </session-factory>
 </hibernate-configuration>
