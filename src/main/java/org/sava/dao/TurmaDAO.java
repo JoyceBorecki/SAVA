@@ -23,21 +23,25 @@ public class TurmaDAO {
 
     public Turma buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Busca a turma e já carrega as listas de professores e alunos
             return session.createQuery(
-                "from Turma t " +
-                "left join fetch t.professores " +
-                "left join fetch t.alunos " +
-                "where t.id = :id", Turma.class)
-                .setParameter("id", id)
-                .uniqueResult();
+                "select t from Turma t " +
+                   "left join fetch t.professores " +
+                   "left join fetch t.alunos " +
+                   "left join fetch t.disciplina " +
+                   "where t.id = :id", Turma.class)
+                   .setParameter("id", id)
+                   .uniqueResult();
         }
     }
 
     public List<Turma> listar() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Lista todas as turmas
-            return session.createQuery("from Turma", Turma.class).list();
+            return session.createQuery(
+                "select distinct t from Turma t " +
+                "left join fetch t.disciplina " +
+                "left join fetch t.alunos",
+                 Turma.class
+            ).list();
         }
     }
 
@@ -70,7 +74,7 @@ public class TurmaDAO {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.merge(turma); // Usa merge para salvar ou atualizar
+            session.merge(turma);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
