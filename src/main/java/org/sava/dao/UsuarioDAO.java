@@ -20,7 +20,7 @@ public class UsuarioDAO {
         }
     }
 
-    public Usuario buscarPorId(int id) {
+    public Usuario buscarPorId(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.get(Usuario.class, id);
         }
@@ -44,7 +44,7 @@ public class UsuarioDAO {
         }
     }
 
-    public void excluir(int id) {
+    public void excluir(Integer id) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
@@ -61,7 +61,13 @@ public class UsuarioDAO {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.merge(usuario); // merge = faz insert ou update automaticamente
+
+            if (usuario.getId() == null) {
+                session.persist(usuario);
+            } else {
+                session.merge(usuario);
+            }
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -69,20 +75,12 @@ public class UsuarioDAO {
         }
     }
 
-
-    /**
-     * Novo método para o LoginServlet.
-     * Busca um usuário pelo seu e-mail.
-     */
     public Usuario buscarPorEmail(String email) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Usuario where email = :email", Usuario.class)
-                    .setParameter("email", email)
-                    .uniqueResult(); // Retorna o usuário ou null se não encontrar
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return session.createQuery(
+                "FROM Usuario WHERE email = :email", Usuario.class)
+                .setParameter("email", email)
+                .uniqueResult();
         }
     }
-
 }

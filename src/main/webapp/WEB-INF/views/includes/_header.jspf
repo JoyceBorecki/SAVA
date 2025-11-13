@@ -1,5 +1,5 @@
 <%-- FILE: /WEB-INF/views/includes/_header.jspf --%>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%-- CORREÇÃO: Força a codificação UTF-8 --%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <header class="app-header">
@@ -15,23 +15,38 @@
       </span>
       <span class="brand-text">Sistema de Avaliação Acadêmica</span>
     </a>
-    
-    <nav class="main-nav" aria-label="Principal">
-      
-      <%-- Link principal para o Dashboard do Aluno --%>
-      <a href="${pageContext.request.contextPath}/dashboard" class="nav-link <c:out value='${currentNav=="avaliacoes"?"active":""}'/>">Minhas Avaliações</a>
-      
-      <%-- Links da Área Administrativa (Gerenciamento) --%>
-      <a href="${pageContext.request.contextPath}/formularios" class="nav-link">Formulários</a>
-      <a href="${pageContext.request.contextPath}/processos" class="nav-link">Processos</a>
-      <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
-      <a href="${pageContext.request.contextPath}/disciplinas" class="nav-link">Disciplinas</a>
-      <a href="${pageContext.request.contextPath}/cursos" class="nav-link">Cursos</a>
-      <a href="${pageContext.request.contextPath}/usuarios" class="nav-link">Usuários</a>
-      
-      
-       <a href="${pageContext.request.contextPath}/login" class="nav-link">Sair</a>
-    </nav>
-  </div>
-  <div class="header-divider" aria-hidden="true"></div>
+      <nav class="main-nav" aria-label="Principal">
+        <a href="${pageContext.request.contextPath}/dashboard" class="nav-link ${currentNav=='avaliacoes' ? 'active' : ''}">
+          Minhas Avaliações
+        </a>
+
+        <%-- ADMINISTRADOR --%>
+        <c:if test="${usuarioLogado.perfil.nome == 'Administrador'}">
+          <a href="${pageContext.request.contextPath}/formularios" class="nav-link">Formulários</a>
+          <a href="${pageContext.request.contextPath}/processos" class="nav-link">Processos</a>
+          <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
+          <a href="${pageContext.request.contextPath}/disciplinas" class="nav-link">Disciplinas</a>
+          <a href="${pageContext.request.contextPath}/cursos" class="nav-link">Cursos</a>
+          <a href="${pageContext.request.contextPath}/usuarios" class="nav-link">Usuários</a>
+        </c:if>
+
+        <%-- COORDENADOR --%>
+        <c:if test="${usuarioLogado.perfil.nome == 'Coordenador'}">
+          <a href="${pageContext.request.contextPath}/processos" class="nav-link">Processos</a>
+          <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
+          <a href="${pageContext.request.contextPath}/disciplinas" class="nav-link">Disciplinas</a>
+        </c:if>
+
+        <%-- PROFESSOR --%>
+        <c:if test="${usuarioLogado.perfil.nome == 'Professor'}">
+          <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
+        </c:if>
+
+        <%-- ALUNO não tem menus extras --%>
+
+        <%-- LOGOUT --%>
+        <a href="${pageContext.request.contextPath}/logout" class="nav-link">Sair</a>
+      </nav>
+    </div>
+    <div class="header-divider" aria-hidden="true"></div>
 </header>

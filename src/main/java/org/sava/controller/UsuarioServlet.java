@@ -4,7 +4,8 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.sava.dao.PerfilDAO; // Importar
+import org.mindrot.jbcrypt.BCrypt;
+import org.sava.dao.PerfilDAO;
 import org.sava.dao.UsuarioDAO;
 import org.sava.model.Perfil;
 import org.sava.model.Usuario;
@@ -16,17 +17,18 @@ import java.util.List;
 public class UsuarioServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO;
-    private PerfilDAO perfilDAO; // Precisamos do DAO de Perfil
+    private PerfilDAO perfilDAO;
 
     @Override
     public void init() {
         usuarioDAO = new UsuarioDAO();
-        perfilDAO = new PerfilDAO(); // Instanciar
+        perfilDAO = new PerfilDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
         String action = req.getParameter("action");
         if (action == null) action = "listar";
 
@@ -46,71 +48,100 @@ public class UsuarioServlet extends HttpServlet {
 
     private void listarUsuarios(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
         List<Usuario> lista = usuarioDAO.listar();
         req.setAttribute("usuarios", lista);
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/usuario/lista.jsp");
         dispatcher.forward(req, resp);
     }
 
     private void carregarPerfis(HttpServletRequest req) {
-        // Método helper para carregar a lista de perfis para o dropdown
         List<Perfil> perfis = perfilDAO.listar();
         req.setAttribute("perfis", perfis);
     }
 
     private void mostrarFormularioNovo(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        carregarPerfis(req); // Carrega a lista de perfis
-        req.setAttribute("usuario", new Usuario()); // Envia um usuário vazio
-        
-        // --- CAMINHO CORRIGIDO ---
+
+        carregarPerfis(req);
+        req.setAttribute("usuario", new Usuario());
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp");
         dispatcher.forward(req, resp);
     }
 
     private void mostrarFormularioEditar(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        int id = Integer.parseInt(req.getParameter("id"));
+
+        Integer id = Integer.parseInt(req.getParameter("id"));
         Usuario usuario = usuarioDAO.buscarPorId(id);
-        
-        carregarPerfis(req); // Carrega a lista de perfis
-        req.setAttribute("usuario", usuario); // Envia o usuário existente
-        
-        // --- CAMINHO CORRIGIDO ---
+
+        carregarPerfis(req);
+        req.setAttribute("usuario", usuario);
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp");
         dispatcher.forward(req, resp);
     }
 
     private void salvarUsuario(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
+            throws IOException, ServletException {
 
         String idParam = req.getParameter("id");
         String nome = req.getParameter("nome");
         String email = req.getParameter("email");
         String senha = req.getParameter("senha");
-        int perfilId = Integer.parseInt(req.getParameter("perfilId"));
+        String perfilParam = req.getParameter("perfilId");
 
-        // Busca o Perfil completo
+        boolean criando = (idParam == null || idParam.isBlank());
+
+        if (nome == null || nome.isBlank()) {
+            enviarErro(req, resp, "O campo Nome é obrigatório.", nome, email, perfilParam);
+            return;
+        }
+
+        if (email == null || email.isBlank()) {
+            enviarErro(req, resp, "O campo E-mail é obrigatório.", nome, email, perfilParam);
+            return;
+        }
+
+        if (perfilParam == null || perfilParam.isBlank()) {
+            enviarErro(req, resp, "Selecione um perfil.", nome, email, perfilParam);
+            return;
+        }
+
+        if (criando && (senha == null || senha.isBlank())) {
+            enviarErro(req, resp, "O campo Senha é obrigatório para novo usuário.", nome, email, perfilParam);
+            return;
+        }
+
+        Usuario existente = usuarioDAO.buscarPorEmail(email);
+
+        if (existente != null && (criando || !existente.getId().equals(Integer.valueOf(idParam)))) {
+            enviarErro(req, resp, "Este e-mail já está sendo usado por outro usuário.", nome, email, perfilParam);
+            return;
+        }
+
+        Integer perfilId = Integer.parseInt(perfilParam);
         Perfil perfil = perfilDAO.buscarPorId(perfilId);
-        
+
         Usuario usuario;
-        
-        if (idParam != null && !idParam.isEmpty()) {
-            // Se tem ID, estamos editando
-            int id = Integer.parseInt(idParam);
-            usuario = usuarioDAO.buscarPorId(id); // Busca o usuário existente
+
+        if (!criando) {
+            Integer id = Integer.parseInt(idParam);
+            usuario = usuarioDAO.buscarPorId(id);
+
             usuario.setNome(nome);
             usuario.setEmail(email);
             usuario.setPerfil(perfil);
-            // Só atualiza a senha se ela foi digitada
-            if (senha != null && !senha.isEmpty()) {
-                usuario.setSenha(senha); 
+
+            if (senha != null && !senha.isBlank()) {
+                usuario.setSenha(BCrypt.hashpw(senha, BCrypt.gensalt()));
             }
+
         } else {
-            // Se não tem ID, é novo
-            usuario = new Usuario(nome, email, senha, perfil);
+            String senhaHash = BCrypt.hashpw(senha, BCrypt.gensalt());
+            usuario = new Usuario(nome, email, senhaHash, perfil);
         }
 
         usuarioDAO.salvarOuAtualizar(usuario);
@@ -119,10 +150,30 @@ public class UsuarioServlet extends HttpServlet {
 
     private void excluirUsuario(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        int id = Integer.parseInt(req.getParameter("id"));
+
+        Integer id = Integer.parseInt(req.getParameter("id"));
         usuarioDAO.excluir(id);
         resp.sendRedirect("usuarios?action=listar");
     }
 
-    
+    private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem, String nome, String email, String perfilId)
+            throws ServletException, IOException {
+
+        req.setAttribute("erro", mensagem);
+
+        Usuario u = new Usuario();
+        u.setNome(nome);
+        u.setEmail(email);
+
+        if (perfilId != null && !perfilId.isBlank()) {
+            Perfil p = perfilDAO.buscarPorId(Integer.parseInt(perfilId));
+            u.setPerfil(p);
+        }
+
+        req.setAttribute("usuario", u);
+        carregarPerfis(req);
+
+        RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp");
+        rd.forward(req, resp);
+    }
 }
