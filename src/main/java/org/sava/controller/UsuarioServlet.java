@@ -48,27 +48,19 @@ public class UsuarioServlet extends HttpServlet {
 
     private void listarUsuarios(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
-        List<Usuario> lista = usuarioDAO.listar();
-        req.setAttribute("usuarios", lista);
-
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/usuario/lista.jsp");
-        dispatcher.forward(req, resp);
+        req.setAttribute("usuarios", usuarioDAO.listar());
+        req.getRequestDispatcher("/WEB-INF/views/usuario/lista.jsp").forward(req, resp);
     }
 
     private void carregarPerfis(HttpServletRequest req) {
-        List<Perfil> perfis = perfilDAO.listar();
-        req.setAttribute("perfis", perfis);
+        req.setAttribute("perfis", perfilDAO.listar());
     }
 
     private void mostrarFormularioNovo(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
         carregarPerfis(req);
         req.setAttribute("usuario", new Usuario());
-
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp");
-        dispatcher.forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp").forward(req, resp);
     }
 
     private void mostrarFormularioEditar(HttpServletRequest req, HttpServletResponse resp)
@@ -80,8 +72,7 @@ public class UsuarioServlet extends HttpServlet {
         carregarPerfis(req);
         req.setAttribute("usuario", usuario);
 
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp");
-        dispatcher.forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp").forward(req, resp);
     }
 
     private void salvarUsuario(HttpServletRequest req, HttpServletResponse resp)
@@ -91,17 +82,23 @@ public class UsuarioServlet extends HttpServlet {
         String nome = req.getParameter("nome");
         String email = req.getParameter("email");
         String senha = req.getParameter("senha");
+        String confirmarSenha = req.getParameter("confirmarSenha");
         String perfilParam = req.getParameter("perfilId");
 
         boolean criando = (idParam == null || idParam.isBlank());
 
         if (nome == null || nome.isBlank()) {
-            enviarErro(req, resp, "O campo Nome é obrigatório.", nome, email, perfilParam);
+            enviarErro(req, resp, "O campo nome é obrigatório.", nome, email, perfilParam);
+            return;
+        }
+
+        if (!nome.matches("^[A-Za-zÀ-ÖØ-öø-ÿ ]+$")) {
+            enviarErro(req, resp, "O nome não pode conter números ou símbolos.", nome, email, perfilParam);
             return;
         }
 
         if (email == null || email.isBlank()) {
-            enviarErro(req, resp, "O campo E-mail é obrigatório.", nome, email, perfilParam);
+            enviarErro(req, resp, "O campo e-mail é obrigatório.", nome, email, perfilParam);
             return;
         }
 
@@ -111,8 +108,25 @@ public class UsuarioServlet extends HttpServlet {
         }
 
         if (criando && (senha == null || senha.isBlank())) {
-            enviarErro(req, resp, "O campo Senha é obrigatório para novo usuário.", nome, email, perfilParam);
+            enviarErro(req, resp, "A senha é obrigatória para novos usuários.", nome, email, perfilParam);
             return;
+        }
+
+        if (senha != null && !senha.isBlank()) {
+            if (senha.length() < 8) {
+                enviarErro(req, resp, "A senha deve ter no mínimo 8 caracteres.", nome, email, perfilParam);
+                return;
+            }
+
+            if (senha.length() > 50) {
+                enviarErro(req, resp, "A senha deve ter no máximo 50 caracteres.", nome, email, perfilParam);
+                return;
+            }
+
+            if (!senha.equals(confirmarSenha)) {
+                enviarErro(req, resp, "As senhas não conferem.", nome, email, perfilParam);
+                return;
+            }
         }
 
         Usuario existente = usuarioDAO.buscarPorEmail(email);
@@ -166,14 +180,12 @@ public class UsuarioServlet extends HttpServlet {
         u.setEmail(email);
 
         if (perfilId != null && !perfilId.isBlank()) {
-            Perfil p = perfilDAO.buscarPorId(Integer.parseInt(perfilId));
-            u.setPerfil(p);
+            u.setPerfil(perfilDAO.buscarPorId(Integer.parseInt(perfilId)));
         }
 
         req.setAttribute("usuario", u);
         carregarPerfis(req);
 
-        RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp");
-        rd.forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/usuario/form.jsp").forward(req, resp);
     }
 }

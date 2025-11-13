@@ -1,0 +1,60 @@
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+    font-size: 22px;
+    user-select: none;
+}
+
+.alert-error {
+    padding: 14px 18px;
+    background: #ffe6e6;
+    border-left: 5px solid #d20000;
+    border-radius: 6px;
+    color: #7a0000;
+    margin-bottom: 22px;
+    font-size: 15px;
+}
+
+.invalid {
+    border-color: #cc0000 !important;
+    background: #fff6f6 !important;
+}
+
+.password-strength {
+    height: 6px;
+    border-radius: 4px;
+    background: #ddd;
+    margin-top: 6px;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    background: #d00;
+    transition: width 0.3s, background-color 0.3s;
+}
+
+.strength-text {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 6px;
+    display: block;
+}
+
+.error-confirmacao {
+    color: #c00;
+    font-size: 14px;
+    display: none;
+    margin-top: 6px;
+}

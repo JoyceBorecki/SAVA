@@ -8,33 +8,8 @@
 <html lang="pt-BR">
 <head>
     <jsp:include page="/WEB-INF/views/includes/_head.jspf" />
-
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400" rel="stylesheet" />
-
-    <style>
-        .password-wrapper {
-            position: relative;
-        }
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #666;
-            font-size: 22px;
-            user-select: none;
-        }
-        .alert-error {
-            padding: 14px 18px;
-            background: #ffe6e6;
-            border-left: 5px solid #d20000;
-            border-radius: 6px;
-            color: #7a0000;
-            margin-bottom: 22px;
-            font-size: 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/usuario-form.css">
 </head>
 
 <body>
@@ -43,7 +18,6 @@
 
 <main class="page-wrap">
     <div class="container">
-
         <section class="mb-4">
             <h1 class="page-title">${pageTitle}</h1>
             <p class="page-subtitle">Preencha os dados para criar ou atualizar um usuário.</p>
@@ -57,18 +31,19 @@
 
         <section class="card card-padding">
 
-            <form class="form-grid" action="usuarios" method="post" novalidate>
+            <form class="form-grid" action="usuarios" method="post" id="formUsuario" novalidate>
                 <input type="hidden" name="id" value="${usuario.id != null ? usuario.id : ''}" />
 
                 <div class="field">
                     <label class="label" for="nome">Nome completo *</label>
-                    <input id="nome" class="input" type="text" name="nome" value="${usuario.nome}" required />
+                    <input id="nome" class="input" type="text" name="nome" value="${usuario.nome}" required/>
+                    <span class="help-text">Somente letras, sem números.</span>
                 </div>
 
                 <div class="field">
                     <label class="label" for="email">E-mail *</label>
-                    <input id="email" class="input" type="email" name="email" value="${usuario.email}" required />
-                    <span class="help-text">Este será utilizado para login.</span>
+                    <input id="email" class="input" type="email" name="email" value="${usuario.email}" required/>
+                    <span class="help-text">Este e-mail será utilizado para acessar o sistema.</span>
                 </div>
 
                 <div class="field">
@@ -76,30 +51,41 @@
                     <select id="perfilId" class="select" name="perfilId" required>
                         <option value="">Selecione</option>
                         <c:forEach var="perfil" items="${perfis}">
-                            <option value="${perfil.id}"${usuario.perfil != null && perfil.id == usuario.perfil.id ? 'selected' : ''}>${perfil.nome}</option>
+                            <option value="${perfil.id}"
+                                ${usuario.perfil != null && perfil.id == usuario.perfil.id ? 'selected' : ''}>
+                                    ${perfil.nome}
+                            </option>
                         </c:forEach>
                     </select>
                 </div>
 
                 <div class="field">
                     <label class="label" for="senha">Senha *</label>
-
                     <div class="password-wrapper">
-                        <input id="senha" class="input" type="password" name="senha"
-                               <c:if test="${empty usuario.id}">required</c:if>/>
-                        <span class="material-symbols-outlined toggle-password" id="toggleSenha">
+                        <input id="senha" class="input" type="password" name="senha" minlength="8" maxlength="50"
+                            <c:if test="${empty usuario.id}">required</c:if>/>
+                        <span class="material-symbols-outlined toggle-password" data-target="senha">
+                            visibility
+                        </span>
+                    </div>
+                    <span class="help-text">Mínimo 8 caracteres, máximo 50.</span>
+                </div>
+
+                <div class="field">
+                    <label class="label" for="confirmarSenha">Confirmar senha *</label>
+                    <div class="password-wrapper">
+                        <input id="confirmarSenha" class="input" type="password" name="confirmarSenha"
+                            <c:if test="${empty usuario.id}">required</c:if> />
+                        <span class="material-symbols-outlined toggle-password" data-target="confirmarSenha">
                             visibility
                         </span>
                     </div>
 
-                    <span class="help-text">
-                        <c:if test="${empty usuario.id}">
-                            Senha obrigatória.
-                        </c:if>
-                        <c:if test="${not empty usuario.id}">
-                            Deixe em branco para manter a senha atual.
-                        </c:if>
+                    <span id="erroConfirmacao" class="error-confirmacao">
+                        As senhas não conferem.
                     </span>
+
+                    <span class="help-text">Repita a senha para confirmar.</span>
                 </div>
 
                 <div class="form-footer">
@@ -110,17 +96,6 @@
         </section>
     </div>
 </main>
-
-<script>
-    const campo = document.getElementById("senha");
-    const botao = document.getElementById("toggleSenha");
-
-    botao.addEventListener("click", () => {
-        const mostrando = campo.type === "text";
-
-        campo.type = mostrando ? "password" : "text";
-        botao.textContent = mostrando ? "visibility" : "visibility_off";
-    });
-</script>
+<script src="${pageContext.request.contextPath}/assets/js/usuario-form.js"></script>
 </body>
 </html>
