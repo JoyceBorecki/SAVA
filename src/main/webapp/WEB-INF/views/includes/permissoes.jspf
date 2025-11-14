@@ -1,0 +1,7 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<c:set var="role" value="${sessionScope.role}" />
+<c:set var="isAdmin" value="${role == 'Administrador'}" />
+<c:set var="isCoord" value="${role == 'Coordenador'}" />
+<c:set var="isProf" value="${role == 'Professor'}" />
+<c:set var="isAluno" value="${role == 'Aluno'}" />

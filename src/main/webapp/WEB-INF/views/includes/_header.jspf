@@ -1,6 +1,7 @@
 <%-- FILE: /WEB-INF/views/includes/_header.jspf --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ include file="/WEB-INF/views/includes/permissoes.jspf" %>
 
 <header class="app-header">
   <div class="header-inner">
@@ -21,7 +22,7 @@
         </a>
 
         <%-- ADMINISTRADOR --%>
-        <c:if test="${usuarioLogado.perfil.nome == 'Administrador'}">
+        <c:if test="${isAdmin}">
           <a href="${pageContext.request.contextPath}/formularios" class="nav-link">Formulários</a>
           <a href="${pageContext.request.contextPath}/processos" class="nav-link">Processos</a>
           <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
@@ -31,14 +32,14 @@
         </c:if>
 
         <%-- COORDENADOR --%>
-        <c:if test="${usuarioLogado.perfil.nome == 'Coordenador'}">
+        <c:if test="${isCoord}">
           <a href="${pageContext.request.contextPath}/processos" class="nav-link">Processos</a>
           <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
           <a href="${pageContext.request.contextPath}/disciplinas" class="nav-link">Disciplinas</a>
         </c:if>
 
         <%-- PROFESSOR --%>
-        <c:if test="${usuarioLogado.perfil.nome == 'Professor'}">
+        <c:if test="${isProf}">
           <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
         </c:if>
 

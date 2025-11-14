@@ -60,6 +60,7 @@ public class LoginServlet extends HttpServlet {
 
         HttpSession session = req.getSession(true);
         session.setAttribute("usuarioLogado", usuario);
+        session.setAttribute("role", usuario.getPerfil().getNome());
 
         resp.sendRedirect("dashboard");
     }
