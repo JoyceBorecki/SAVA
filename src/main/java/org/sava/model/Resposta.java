@@ -12,25 +12,17 @@ public class Resposta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Para RF09 (Questões Abertas)
     @Column(name = "texto_resposta", columnDefinition = "TEXT")
     private String textoResposta;
 
-    // Relacionamento (Muitas-para-Um)
-    // Resolve o erro na lista "respostas" de AvaliacaoRespondida.java
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "avaliacao_respondida_id", nullable = false)
     private AvaliacaoRespondida avaliacaoRespondida;
 
-    // Relacionamento (Muitas-para-Um)
-    // Resolve o erro na lista "respostas" de Questao.java
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "questao_id", nullable = false)
     private Questao questao;
 
-    // Relacionamento (Muitos-para-Muitos)
-    // Para RF08 (Questões Única e Múltipla)
-    // Resolve o erro no set "respostas" de Alternativa.java
     @ManyToMany
     @JoinTable(
             name = "resposta_alternativas",
@@ -39,7 +31,6 @@ public class Resposta {
     )
     private Set<Alternativa> alternativasMarcadas = new HashSet<>();
 
-    // --- Construtores ---
     public Resposta() {}
 
     public Resposta(AvaliacaoRespondida avaliacaoRespondida, Questao questao) {
@@ -47,7 +38,6 @@ public class Resposta {
         this.questao = questao;
     }
 
-    // --- Getters e Setters ---
     public int getId() {
         return id;
     }

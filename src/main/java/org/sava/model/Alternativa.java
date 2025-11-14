@@ -15,18 +15,13 @@ public class Alternativa {
     @Column(nullable = false, length = 500)
     private String texto;
 
-    // Relacionamento (Muitas-para-Um)
-    // Resolve o erro na lista "alternativas" de Questao.java
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "questao_id", nullable = false)
     private Questao questao;
 
-    // Relacionamento (Muitos-para-Muitos) com Resposta
-    // (Item 9 do plano)
     @ManyToMany(mappedBy = "alternativasMarcadas")
-    private Set<Resposta> respostas = new HashSet<>(); // <--- NOVO ERRO ESPERADO AQUI
+    private Set<Resposta> respostas = new HashSet<>();
 
-    // --- Construtores ---
     public Alternativa() {}
 
     public Alternativa(String texto, Questao questao) {
@@ -34,7 +29,6 @@ public class Alternativa {
         this.questao = questao;
     }
 
-    // --- Getters e Setters ---
     public int getId() {
         return id;
     }

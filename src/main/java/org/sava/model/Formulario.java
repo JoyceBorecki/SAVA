@@ -1,9 +1,7 @@
 package org.sava.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,26 +16,18 @@ public class Formulario {
     private String titulo;
 
     @Column(nullable = false)
-    private boolean anonimo = false; // RF11: Configuração de anonimato
+    private boolean anonimo = false;
 
-    // Relacionamento (Muitas-para-Um)
-    // Resolve o erro em ProcessoAvaliativo.java
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "processo_avaliativo_id", nullable = false)
     private ProcessoAvaliativo processoAvaliativo;
 
-    // Relacionamento (Um-para-Muitos) com Questao
-    // (Item 5 do plano)
     @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Questao> questoes = new ArrayList<>(); // <--- NOVO ERRO ESPERADO AQUI
+    private Set<Questao> questoes = new HashSet<>();
 
-    // Relacionamento (Um-para-Muitos) com Avaliacao
-    // (Item 7 do plano)
     @OneToMany(mappedBy = "formulario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Avaliacao> avaliacoes = new ArrayList<>(); // <--- NOVO ERRO ESPERADO AQUI
+    private Set<Avaliacao> avaliacoes = new HashSet<>();
 
-    // Relacionamento (Muitos-para-Muitos) com Perfil
-    // RF07: Para quais perfis o formulário é destinado
     @ManyToMany
     @JoinTable(
             name = "formulario_perfis",
@@ -46,7 +36,6 @@ public class Formulario {
     )
     private Set<Perfil> perfisDestinados = new HashSet<>();
 
-    // --- Construtores ---
     public Formulario() {}
 
     public Formulario(String titulo, boolean anonimo, ProcessoAvaliativo processoAvaliativo) {
@@ -55,7 +44,6 @@ public class Formulario {
         this.processoAvaliativo = processoAvaliativo;
     }
 
-    // --- Getters e Setters ---
     public int getId() {
         return id;
     }
@@ -88,19 +76,19 @@ public class Formulario {
         this.processoAvaliativo = processoAvaliativo;
     }
 
-    public List<Questao> getQuestoes() {
+    public Set<Questao> getQuestoes() {
         return questoes;
     }
 
-    public void setQuestoes(List<Questao> questoes) {
+    public void setQuestoes(Set<Questao> questoes) {
         this.questoes = questoes;
     }
 
-    public List<Avaliacao> getAvaliacoes() {
+    public Set<Avaliacao> getAvaliacoes() {
         return avaliacoes;
     }
 
-    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+    public void setAvaliacoes(Set<Avaliacao> avaliacoes) {
         this.avaliacoes = avaliacoes;
     }
 

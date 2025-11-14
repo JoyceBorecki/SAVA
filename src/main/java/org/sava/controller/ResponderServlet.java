@@ -65,7 +65,7 @@ public class ResponderServlet extends HttpServlet {
         List<Questao> questoes = questaoDAO.listarPorFormularioId(formulario.getId());
         for (Questao q : questoes) {
             // Força o carregamento das alternativas
-            q.setAlternativas(alternativaDAO.listarPorQuestaoId(q.getId()));
+            q.setAlternativas(new HashSet<>(alternativaDAO.listarPorQuestaoId(q.getId())));
         }
 
         req.setAttribute("avaliacao", avaliacao);

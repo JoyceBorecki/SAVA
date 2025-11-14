@@ -72,15 +72,16 @@
                     <td><c:out value="${formulario.titulo}" /></td>
                     <td><c:out value="${formulario.processoAvaliativo.nome}" /></td>
                     <td>${formulario.anonimo ? 'Sim' : 'Não'}</td>
-                    <td class="actions">
-                      <a href="formularios?action=editar&id=${formulario.id}">Editar</a>
-                      <%-- Adicionar link para gerenciar questões no futuro --%>
-                      <%-- <a href="formularios?action=gerenciarQuestoes&id=${formulario.id}">Questões</a> --%>
-                      <a href="formularios?action=excluir&id=${formulario.id}" 
-                         onclick="return confirm('Tem certeza que deseja excluir este formulário?');">
-                         Excluir
-                      </a>
-                    </td>
+                      <td class="actions">
+                          <a href="formularios?action=editar&id=${formulario.id}">Editar</a>
+                          <a href="formularios?action=gerenciarQuestoes&id=${formulario.id}">
+                              Questões
+                          </a>
+                          <a href="formularios?action=excluir&id=${formulario.id}"
+                             onclick="return confirm('Tem certeza que deseja excluir este formulário?');">
+                              Excluir
+                          </a>
+                      </td>
                   </tr>
                 </c:forEach>
               </tbody>

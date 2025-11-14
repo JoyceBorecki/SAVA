@@ -1,18 +1,17 @@
 package org.sava.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "questoes")
 public class Questao {
 
-    // Enum para RF08 e RF09 (Tipo da questão)
     public enum TipoQuestao {
-        ABERTA, // Resposta textual
-        UNICA,  // Múltipla escolha, resposta única
-        MULTIPLA // Múltipla escolha, várias respostas
+        ABERTA,
+        UNICA,
+        MULTIPLA
     }
 
     @Id
@@ -23,29 +22,22 @@ public class Questao {
     private String enunciado;
 
     @Column(nullable = false)
-    private boolean obrigatoria = true; // RF10
+    private boolean obrigatoria = true;
 
-    @Enumerated(EnumType.STRING) // Salva o nome ("ABERTA") no BD
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private TipoQuestao tipo;
 
-    // Relacionamento (Muitas-para-Um)
-    // Resolve o erro em Formulario.java
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formulario_id", nullable = false)
     private Formulario formulario;
 
-    // Relacionamento (Um-para-Muitos) com Alternativa
-    // (Item 6 do plano)
     @OneToMany(mappedBy = "questao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Alternativa> alternativas = new ArrayList<>();
+    private Set<Alternativa> alternativas = new HashSet<>();
 
-    // Relacionamento (Um-para-Muitos) com Resposta
-    // (Item 9 do plano)
     @OneToMany(mappedBy = "questao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Resposta> respostas = new ArrayList<>(); // <--- NOVO ERRO ESPERADO AQUI
+    private Set<Resposta> respostas = new HashSet<>();
 
-    // --- Construtores ---
     public Questao() {}
 
     public Questao(String enunciado, boolean obrigatoria, TipoQuestao tipo, Formulario formulario) {
@@ -55,7 +47,6 @@ public class Questao {
         this.formulario = formulario;
     }
 
-    // --- Getters e Setters ---
     public int getId() {
         return id;
     }
@@ -96,19 +87,19 @@ public class Questao {
         this.formulario = formulario;
     }
 
-    public List<Alternativa> getAlternativas() {
+    public Set<Alternativa> getAlternativas() {
         return alternativas;
     }
 
-    public void setAlternativas(List<Alternativa> alternativas) {
+    public void setAlternativas(Set<Alternativa> alternativas) {
         this.alternativas = alternativas;
     }
 
-    public List<Resposta> getRespostas() {
+    public Set<Resposta> getRespostas() {
         return respostas;
     }
 
-    public void setRespostas(List<Resposta> respostas) {
+    public void setRespostas(Set<Resposta> respostas) {
         this.respostas = respostas;
     }
 
