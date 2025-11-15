@@ -83,4 +83,18 @@ public class UsuarioDAO {
                 .uniqueResult();
         }
     }
+
+    public List<Usuario> buscarPorPerfil(String nomePerfil) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<Usuario> lista = session.createQuery(
+                "SELECT u FROM Usuario u " +
+                 "JOIN u.perfil p " +
+                 "WHERE LOWER(p.nome) = LOWER(:perfil)",
+                 Usuario.class
+            )
+                 .setParameter("perfil", nomePerfil)
+                 .list();
+            return lista;
+        }
+    }
 }

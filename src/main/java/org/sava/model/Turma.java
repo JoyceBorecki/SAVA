@@ -17,38 +17,29 @@ public class Turma {
     @Column(length = 20)
     private String semestre;
 
-    // Relacionamento (Muitas-para-Um)
-    // A "dona" do relacionamento com Disciplina (resolve o erro em Disciplina.java)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "disciplina_id", nullable = false)
     private Disciplina disciplina;
 
-    // Relacionamento (Muitos-para-Muitos) com Professores
-    // (Professores são Usuarios com Perfil "Professor")
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "turma_professores", // Tabela pivo
+            name = "turma_professores",
             joinColumns = @JoinColumn(name = "turma_id"),
-            inverseJoinColumns = @JoinColumn(name = "professor_id") // ID de Usuario
+            inverseJoinColumns = @JoinColumn(name = "professor_id")
     )
     private Set<Usuario> professores = new HashSet<>();
 
-    // Relacionamento (Muitos-para-Muitos) com Alunos
-    // (Alunos são Usuarios com Perfil "Aluno")
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "turma_alunos", // Tabela pivo
+            name = "turma_alunos",
             joinColumns = @JoinColumn(name = "turma_id"),
-            inverseJoinColumns = @JoinColumn(name = "aluno_id") // ID de Usuario
+            inverseJoinColumns = @JoinColumn(name = "aluno_id")
     )
     private Set<Usuario> alunos = new HashSet<>();
 
-    // Relacionamento (Um-para-Muitos) com Avaliacao
-    // (Item 7 do plano)
     @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Avaliacao> avaliacoes = new ArrayList<>(); // <--- NOVO ERRO ESPERADO AQUI
+    private List<Avaliacao> avaliacoes = new ArrayList<>();
 
-    // --- Construtores ---
     public Turma() {}
 
     public Turma(String semestre, Disciplina disciplina) {
@@ -56,54 +47,23 @@ public class Turma {
         this.disciplina = disciplina;
     }
 
-    // --- Getters e Setters ---
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public String getSemestre() { return semestre; }
+    public void setSemestre(String semestre) { this.semestre = semestre; }
 
-    public String getSemestre() {
-        return semestre;
-    }
+    public Disciplina getDisciplina() { return disciplina; }
+    public void setDisciplina(Disciplina disciplina) { this.disciplina = disciplina; }
 
-    public void setSemestre(String semestre) {
-        this.semestre = semestre;
-    }
+    public Set<Usuario> getProfessores() { return professores; }
+    public void setProfessores(Set<Usuario> professores) { this.professores = professores; }
 
-    public Disciplina getDisciplina() {
-        return disciplina;
-    }
+    public Set<Usuario> getAlunos() { return alunos; }
+    public void setAlunos(Set<Usuario> alunos) { this.alunos = alunos; }
 
-    public void setDisciplina(Disciplina disciplina) {
-        this.disciplina = disciplina;
-    }
-
-    public Set<Usuario> getProfessores() {
-        return professores;
-    }
-
-    public void setProfessores(Set<Usuario> professores) {
-        this.professores = professores;
-    }
-
-    public Set<Usuario> getAlunos() {
-        return alunos;
-    }
-
-    public void setAlunos(Set<Usuario> alunos) {
-        this.alunos = alunos;
-    }
-
-    public List<Avaliacao> getAvaliacoes() {
-        return avaliacoes;
-    }
-
-    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
-        this.avaliacoes = avaliacoes;
-    }
+    public List<Avaliacao> getAvaliacoes() { return avaliacoes; }
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) { this.avaliacoes = avaliacoes; }
 
     @Override
     public String toString() {

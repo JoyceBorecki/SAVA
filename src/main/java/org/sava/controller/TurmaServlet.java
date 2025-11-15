@@ -24,15 +24,15 @@ public class TurmaServlet extends HttpServlet {
 
     private TurmaDAO turmaDAO;
     private DisciplinaDAO disciplinaDAO;
-    private UsuarioDAO usuarioDAO; // Necessário para listar alunos/professores
-    private PerfilDAO perfilDAO;   // Necessário para buscar perfis
+    private UsuarioDAO usuarioDAO;
+    private PerfilDAO perfilDAO;
 
     @Override
     public void init() {
         turmaDAO = new TurmaDAO();
         disciplinaDAO = new DisciplinaDAO();
-        usuarioDAO = new UsuarioDAO(); // Instanciar
-        perfilDAO = new PerfilDAO();   // Instanciar
+        usuarioDAO = new UsuarioDAO();
+        perfilDAO = new PerfilDAO();
     }
 
     @Override
@@ -45,7 +45,6 @@ public class TurmaServlet extends HttpServlet {
             case "novo" -> mostrarFormularioNovo(req, resp);
             case "editar" -> mostrarFormularioEditar(req, resp);
             case "excluir" -> excluirTurma(req, resp);
-            // Novas ações GET
             case "gerenciar" -> mostrarGerenciadorTurma(req, resp);
             case "removerParticipante" -> removerParticipante(req, resp);
             default -> listarTurmas(req, resp);
@@ -62,20 +61,16 @@ public class TurmaServlet extends HttpServlet {
         }
 
         switch (action) {
-            // Novas ações POST
             case "adicionarParticipante" -> adicionarParticipante(req, resp);
             default -> salvarTurma(req, resp);
         }
     }
 
-    // --- Métodos de CRUD de Turma (existentes) ---
-
     private void listarTurmas(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         List<Turma> lista = turmaDAO.listar();
         req.setAttribute("turmas", lista);
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/turma/lista.jsp");
         dispatcher.forward(req, resp);
     }
@@ -88,41 +83,66 @@ public class TurmaServlet extends HttpServlet {
     private void mostrarFormularioNovo(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         carregarDependencias(req);
+        carregarProfessoresEAlunos(req);
+
         req.setAttribute("turma", new Turma());
-        
-        // --- CAMINHO CORRIGIDO ---
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/turma/form.jsp");
-        dispatcher.forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/turma/form.jsp").forward(req, resp);
     }
 
     private void mostrarFormularioEditar(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
         Turma turma = turmaDAO.buscarPorId(id);
-        
+
         carregarDependencias(req);
+        carregarProfessoresEAlunos(req);
+
         req.setAttribute("turma", turma);
-        
-        // --- CAMINHO CORRIGIDO ---
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/turma/form.jsp");
-        dispatcher.forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/turma/form.jsp").forward(req, resp);
     }
 
     private void salvarTurma(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        
+
         String idParam = req.getParameter("id");
         String semestre = req.getParameter("semestre");
         int disciplinaId = Integer.parseInt(req.getParameter("disciplinaId"));
 
         Disciplina disciplina = disciplinaDAO.buscarPorId(disciplinaId);
-        
-        Turma turma = new Turma(semestre, disciplina);
-        if (idParam != null && !idParam.isEmpty()) {
-            turma.setId(Integer.parseInt(idParam));
+
+        Turma turma;
+
+        if (idParam == null || idParam.isBlank()) {
+            turma = new Turma();
+        } else {
+            turma = turmaDAO.buscarPorId(Integer.parseInt(idParam));
+        }
+
+        turma.setSemestre(semestre);
+        turma.setDisciplina(disciplina);
+
+        turma.getProfessores().clear();
+        String[] profIds = req.getParameterValues("professores");
+        if (profIds != null) {
+            for (String pid : profIds) {
+                Usuario u = usuarioDAO.buscarPorId(Integer.parseInt(pid));
+                if (u != null)
+                    turma.getProfessores().add(u);
+            }
+        }
+
+        turma.getAlunos().clear();
+        String[] alunosIds = req.getParameterValues("alunos");
+        if (alunosIds != null) {
+            for (String aid : alunosIds) {
+                Usuario u = usuarioDAO.buscarPorId(Integer.parseInt(aid));
+                if (u != null)
+                    turma.getAlunos().add(u);
+            }
         }
 
         turmaDAO.salvarOuAtualizar(turma);
+
         resp.sendRedirect("turmas?action=listar");
     }
 
@@ -133,17 +153,13 @@ public class TurmaServlet extends HttpServlet {
         resp.sendRedirect("turmas?action=listar");
     }
 
-    // --- NOVOS MÉTODOS PARA GERENCIAR TURMA (Alunos/Professores) ---
-
     private void mostrarGerenciadorTurma(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         int turmaId = Integer.parseInt(req.getParameter("id"));
-        Turma turma = turmaDAO.buscarPorId(turmaId); // DAO já busca alunos e professores
+        Turma turma = turmaDAO.buscarPorId(turmaId);
 
-        // Carrega todos os usuários para os dropdowns
         List<Usuario> todosUsuarios = usuarioDAO.listar();
-        
-        // Separa por perfil (para facilitar nos dropdowns)
+
         List<Usuario> todosAlunos = todosUsuarios.stream()
             .filter(u -> u.getPerfil().getNome().equalsIgnoreCase("Aluno"))
             .collect(Collectors.toList());
@@ -155,8 +171,7 @@ public class TurmaServlet extends HttpServlet {
         req.setAttribute("turma", turma);
         req.setAttribute("todosAlunos", todosAlunos);
         req.setAttribute("todosProfessores", todosProfessores);
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/turma/gerenciar.jsp");
         dispatcher.forward(req, resp);
     }
@@ -165,7 +180,7 @@ public class TurmaServlet extends HttpServlet {
             throws IOException {
         int turmaId = Integer.parseInt(req.getParameter("turmaId"));
         int usuarioId = Integer.parseInt(req.getParameter("usuarioId"));
-        String tipo = req.getParameter("tipo"); // "aluno" ou "professor"
+        String tipo = req.getParameter("tipo");
 
         Turma turma = turmaDAO.buscarPorId(turmaId);
         Usuario usuario = usuarioDAO.buscarPorId(usuarioId);
@@ -176,7 +191,7 @@ public class TurmaServlet extends HttpServlet {
             } else if ("professor".equals(tipo)) {
                 turma.getProfessores().add(usuario);
             }
-            turmaDAO.atualizar(turma); // Salva a relação ManyToMany
+            turmaDAO.atualizar(turma);
         }
 
         resp.sendRedirect("turmas?action=gerenciar&id=" + turmaId);
@@ -186,7 +201,7 @@ public class TurmaServlet extends HttpServlet {
             throws IOException {
         int turmaId = Integer.parseInt(req.getParameter("turmaId"));
         int usuarioId = Integer.parseInt(req.getParameter("usuarioId"));
-        String tipo = req.getParameter("tipo"); // "aluno" ou "professor"
+        String tipo = req.getParameter("tipo");
 
         Turma turma = turmaDAO.buscarPorId(turmaId);
         Usuario usuario = usuarioDAO.buscarPorId(usuarioId);
@@ -197,9 +212,16 @@ public class TurmaServlet extends HttpServlet {
             } else if ("professor".equals(tipo)) {
                 turma.getProfessores().remove(usuario);
             }
-            turmaDAO.atualizar(turma); // Salva a relação ManyToMany
+            turmaDAO.atualizar(turma);
         }
         
         resp.sendRedirect("turmas?action=gerenciar&id=" + turmaId);
+    }
+
+    private void carregarProfessoresEAlunos(HttpServletRequest req) {
+        List<Usuario> professores = usuarioDAO.buscarPorPerfil("Professor");
+        List<Usuario> alunos = usuarioDAO.buscarPorPerfil("Aluno");
+        req.setAttribute("professores", professores);
+        req.setAttribute("alunos", alunos);
     }
 }

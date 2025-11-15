@@ -23,16 +23,23 @@ public class TurmaDAO {
 
     public Turma buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
-                "select t from Turma t " +
-                   "left join fetch t.professores " +
-                   "left join fetch t.alunos " +
-                   "left join fetch t.disciplina " +
-                   "where t.id = :id", Turma.class)
+            Turma turma = session.createQuery(
+               "select distinct t from Turma t " +
+                "left join fetch t.professores " +
+                "left join fetch t.alunos " +
+                "left join fetch t.disciplina " +
+                "where t.id = :id", Turma.class)
                    .setParameter("id", id)
                    .uniqueResult();
+
+            if (turma == null) {
+                return new Turma();
+            }
+
+            return turma;
         }
     }
+
 
     public List<Turma> listar() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
