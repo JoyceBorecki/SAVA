@@ -23,14 +23,30 @@ public class AvaliacaoDAO {
 
     public Avaliacao buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(Avaliacao.class, id);
+            return session.createQuery(
+                 "select distinct a from Avaliacao a " +
+                 "join fetch a.formulario f " +
+                 "join fetch a.turma t " +
+                 "join fetch t.disciplina d " +
+                 "left join fetch t.professores prof " +
+                 "left join fetch t.alunos aluno " +
+                 "where a.id = :id",
+                 Avaliacao.class
+            )
+                 .setParameter("id", id)
+                 .uniqueResult();
         }
     }
 
     public List<Avaliacao> listar() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Traz a avaliação já com o formulário e a turma
-            return session.createQuery("from Avaliacao a join fetch a.formulario join fetch a.turma", Avaliacao.class).list();
+            return session.createQuery(
+                "select distinct a from Avaliacao a " +
+                "join fetch a.formulario f " +
+                "join fetch a.turma t " +
+                "join fetch t.disciplina d",
+                Avaliacao.class
+            ).list();
         }
     }
 
@@ -71,27 +87,23 @@ public class AvaliacaoDAO {
         }
     }
 
-    /**
-     * Novo método para o DashboardServlet.
-     * Lista todas as avaliações (Formulario + Turma)
-     * às quais um aluno específico está vinculado (via matrícula na turma).
-     * RF12 - Aluno deve ter acesso apenas às avaliações das turmas em que está matriculado.
-     */
     public List<Avaliacao> listarPorAlunoId(int alunoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Este HQL navega:
-            // 1. Começa em Avaliacao (a)
-            // 2. Entra em Turma (a.turma t)
-            // 3. Entra na lista de alunos da turma (t.alunos aluno)
-            // 4. Filtra onde o id do aluno bate
             return session.createQuery(
-                "select distinct a from Avaliacao a " +
-                "join fetch a.formulario " +
-                "join fetch a.turma t " +
-                "join t.alunos aluno " +
-                "where aluno.id = :alunoId", Avaliacao.class)
-                .setParameter("alunoId", alunoId)
-                .list();
+                 "select distinct a from Avaliacao a " +
+                 "join fetch a.formulario f " +
+                 "join fetch f.processoAvaliativo pa " +
+                 "left join f.perfisDestinados perfis " +
+                 "join fetch a.turma t " +
+                 "join fetch t.disciplina d " +
+                 "left join fetch t.professores prof " +
+                 "join t.alunos aluno " +
+                 "where aluno.id = :alunoId " +
+                 "and (perfis is null or perfis.id = aluno.perfil.id)",
+                    Avaliacao.class
+            )
+            .setParameter("alunoId", alunoId)
+           .list();
         }
     }
 }

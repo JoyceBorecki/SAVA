@@ -88,6 +88,27 @@
               </div>
               <span class="help-text">Selecione quais perfis poderão responder este formulário.</span>
             </div>
+
+              <div class="field">
+                  <label class="label">Turmas que receberão este formulário</label>
+                  <div class="choice-group">
+                      <c:forEach var="turma" items="${turmas}">
+                          <c:set var="selecionada" value="false" />
+                          <c:forEach var="av" items="${formulario.avaliacoes}">
+                              <c:if test="${av.turma.id == turma.id}">
+                                  <c:set var="selecionada" value="true" />
+                              </c:if>
+                          </c:forEach>
+                          <label class="option-control checkbox">
+                              <input type="checkbox" name="turmasAplicadas" value="${turma.id}"${selecionada ? "checked" : ""}/>
+                              <span class="option-label">
+                                ${turma.disciplina.nome} — ${turma.semestre}
+                              </span>
+                          </label>
+                      </c:forEach>
+                  </div>
+                  <span class="help-text">Selecione as turmas que receberão este formulário.</span>
+              </div>
             
             <%-- Botões de Ação --%>
             <div class="form-footer">

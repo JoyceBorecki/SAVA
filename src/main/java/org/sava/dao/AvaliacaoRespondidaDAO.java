@@ -89,12 +89,15 @@ public class AvaliacaoRespondidaDAO {
     public List<AvaliacaoRespondida> listarPorAlunoId(int alunoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                "from AvaliacaoRespondida ar " +
-                "join fetch ar.avaliacao " + // Opcional, mas bom para pegar o ID
-                "where ar.aluno.id = :alunoId", 
-                AvaliacaoRespondida.class)
-                .setParameter("alunoId", alunoId)
-                .list();
+                 "select distinct ar from AvaliacaoRespondida ar " +
+                 "join fetch ar.avaliacao a " +
+                 "join fetch a.formulario f " +
+                 "join fetch a.turma t " +
+                 "left join fetch t.professores " +
+                 "where ar.aluno.id = :alunoId",
+                    AvaliacaoRespondida.class)
+                    .setParameter("alunoId", alunoId)
+                    .list();
         }
     }
 }

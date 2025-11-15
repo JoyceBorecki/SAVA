@@ -81,9 +81,13 @@ public class FormularioServlet extends HttpServlet {
     private void carregarDependencias(HttpServletRequest req) {
         List<ProcessoAvaliativo> processos = processoDAO.listar();
         List<Perfil> perfis = perfilDAO.listar();
+        List<Turma> turmas = new TurmaDAO().listar();
+
         req.setAttribute("processos", processos);
         req.setAttribute("perfis", perfis);
+        req.setAttribute("turmas", turmas);
     }
+
 
     private void mostrarFormularioNovo(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -108,14 +112,15 @@ public class FormularioServlet extends HttpServlet {
 
     private void salvarFormulario(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        
         String idParam = req.getParameter("id");
         String titulo = req.getParameter("titulo");
         boolean anonimo = "on".equals(req.getParameter("anonimo"));
         int processoId = Integer.parseInt(req.getParameter("processoId"));
         String[] perfisIds = req.getParameterValues("perfisDestinados");
+        String[] turmasIds = req.getParameterValues("turmasAplicadas");
 
         ProcessoAvaliativo processo = processoDAO.buscarPorId(processoId);
+
         Set<Perfil> perfisDestinados = new HashSet<>();
         if (perfisIds != null) {
             for (String perfilId : perfisIds) {
@@ -126,11 +131,35 @@ public class FormularioServlet extends HttpServlet {
         Formulario formulario = new Formulario(titulo, anonimo, processo);
         formulario.setPerfisDestinados(perfisDestinados);
 
-        if (idParam != null && !idParam.isEmpty()) {
+        boolean edicao = idParam != null && !idParam.isEmpty();
+        if (edicao) {
             formulario.setId(Integer.parseInt(idParam));
         }
 
         formularioDAO.salvarOuAtualizar(formulario);
+
+        AvaliacaoDAO avaliacaoDAO = new AvaliacaoDAO();
+        TurmaDAO turmaDAO = new TurmaDAO();
+
+        List<Avaliacao> antigas = new HashSet<>(formularioDAO
+                .buscarPorIdComAvaliacoes(formulario.getId())
+                .getAvaliacoes())
+                .stream().toList();
+
+        for (Avaliacao av : antigas) {
+            avaliacaoDAO.excluir(av.getId());
+        }
+
+        if (turmasIds != null) {
+            for (String turmaIdStr : turmasIds) {
+                int turmaId = Integer.parseInt(turmaIdStr);
+                Turma turma = turmaDAO.buscarPorId(turmaId);
+
+                Avaliacao nova = new Avaliacao(formulario, turma);
+                avaliacaoDAO.salvar(nova);
+            }
+        }
+
         resp.sendRedirect("formularios?action=listar");
     }
 

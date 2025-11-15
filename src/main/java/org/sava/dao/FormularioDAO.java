@@ -95,4 +95,18 @@ public class FormularioDAO {
             e.printStackTrace();
         }
     }
+
+    public Formulario buscarPorIdComAvaliacoes(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                 "select distinct f from Formulario f " +
+                 "left join fetch f.processoAvaliativo " +
+                 "left join fetch f.perfisDestinados " +
+                 "left join fetch f.avaliacoes a " +
+                 "left join fetch a.turma " +
+                 "where f.id = :id", Formulario.class)
+                    .setParameter("id", id)
+                    .uniqueResult();
+        }
+    }
 }
