@@ -2,8 +2,6 @@
 
 Sistema web para avaliação institucional de disciplinas, onde alunos respondem formulários vinculados às turmas em que estão matriculados. O sistema gerencia todo o processo avaliativo, permite avaliações anônimas ou identificadas, suporta múltiplos perfis de usuário e gera relatórios.
 
----
-
 ## Objetivo
 
 Este projeto foi desenvolvido como trabalho prático da disciplina **DS142 – Linguagem de Programação Orientada a Objetos II**, com os seguintes objetivos:
@@ -16,14 +14,10 @@ Este projeto foi desenvolvido como trabalho prático da disciplina **DS142 – L
 - Gerar relatórios estatísticos
 - Utilizar Docker e Tomcat na implantação e execução
 
----
-
 ## Integrantes do Grupo
 
 - **Joyce Adriana Borecki**
 - **Victoria Isabele Corbolin Monte**
-
----
 
 ## Como Executar
 
@@ -39,8 +33,6 @@ As configurações de login e senha do banco de dados estão definidas nos arqui
 
 O sistema popula automaticamente o banco com dados iniciais, como perfis, usuários, cursos, disciplinas, turmas e processos avaliativos. A execução inicial já cria registros suficientes para testar o sistema.
 
----
-
 ## Tecnologias Utilizadas
 
 - Java 17
@@ -51,8 +43,6 @@ O sistema popula automaticamente o banco com dados iniciais, como perfis, usuár
 - Docker
 - Tomcat
 - JUnit
-
----
 
 ## Funcionalidades Principais
 
