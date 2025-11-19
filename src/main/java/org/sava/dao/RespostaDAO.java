@@ -23,7 +23,6 @@ public class RespostaDAO {
 
     public Resposta buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-             // Busca a resposta e já carrega as alternativas marcadas
              return session.createQuery(
                 "from Resposta r " +
                 "left join fetch r.alternativasMarcadas " +

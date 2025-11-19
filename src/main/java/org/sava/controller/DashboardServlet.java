@@ -46,7 +46,7 @@ public class DashboardServlet extends HttpServlet {
 
         if (!usuarioLogado.getPerfil().getNome().equalsIgnoreCase("Aluno")) {
             resp.sendRedirect("relatorios");
-            return; // Encerra a execução aqui
+            return;
         }
 
         List<Avaliacao> todasAvaliacoes = avaliacaoDAO.listarPorUsuario(usuarioLogado.getId());
