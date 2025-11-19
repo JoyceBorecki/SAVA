@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>
   <c:out value="${pageTitle}" />
-  <c:if test="${empty pageTitle}">Sistema de Avaliação Acadêmica</c:if>
+  <c:if test="${empty pageTitle}">SAVA</c:if>
 </title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

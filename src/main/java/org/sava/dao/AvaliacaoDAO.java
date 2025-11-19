@@ -87,22 +87,25 @@ public class AvaliacaoDAO {
         }
     }
 
-    public List<Avaliacao> listarPorAlunoId(int alunoId) {
+    /**
+     * VERSÃO ESTRITA (SÓ ALUNOS):
+     * Retorna as avaliações apenas se o usuário estiver matriculado na lista de ALUNOS da turma.
+     * Atende rigorosamente ao RF12.
+     */
+    public List<Avaliacao> listarPorUsuario(int alunoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
                  "select distinct a from Avaliacao a " +
                  "join fetch a.formulario f " +
                  "join fetch f.processoAvaliativo pa " +
-                 "left join f.perfisDestinados perfis " +
                  "join fetch a.turma t " +
                  "join fetch t.disciplina d " +
-                 "left join fetch t.professores prof " +
-                 "join t.alunos aluno " +
-                 "where aluno.id = :alunoId " +
-                 "and (perfis is null or perfis.id = aluno.perfil.id)",
+                 "left join fetch t.professores profDisplay " + 
+                 "join t.alunos al " + // Join obrigatório com a lista de alunos
+                 "where al.id = :uid", // O usuário TEM que ser um dos alunos
                     Avaliacao.class
             )
-            .setParameter("alunoId", alunoId)
+            .setParameter("uid", alunoId)
            .list();
         }
     }

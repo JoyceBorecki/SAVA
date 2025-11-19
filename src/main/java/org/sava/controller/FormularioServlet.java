@@ -121,11 +121,10 @@ public class FormularioServlet extends HttpServlet {
 
         ProcessoAvaliativo processo = processoDAO.buscarPorId(processoId);
 
+        Perfil perfilAluno = perfilDAO.buscarPorNome("Aluno");
         Set<Perfil> perfisDestinados = new HashSet<>();
-        if (perfisIds != null) {
-            for (String perfilId : perfisIds) {
-                perfisDestinados.add(perfilDAO.buscarPorId(Integer.parseInt(perfilId)));
-            }
+        if (perfilAluno != null) {
+            perfisDestinados.add(perfilAluno);
         }
 
         Formulario formulario = new Formulario(titulo, anonimo, processo);
@@ -197,8 +196,23 @@ public class FormularioServlet extends HttpServlet {
         Formulario formulario = formularioDAO.buscarPorId(formularioId);
         Questao.TipoQuestao tipo = Questao.TipoQuestao.valueOf(tipoStr);
 
+        // 1. Salva a Questão primeiro
         Questao questao = new Questao(enunciado, obrigatoria, tipo, formulario);
         questaoDAO.salvar(questao);
+
+        // 2. Verifica se vieram alternativas no formulário (Novidade)
+        // O campo no HTML terá o nome "novasAlternativas"
+        String[] alternativas = req.getParameterValues("novasAlternativas");
+        
+        // Só salvamos alternativas se o tipo for compatível e se houver dados
+        if (alternativas != null && (tipo == Questao.TipoQuestao.UNICA || tipo == Questao.TipoQuestao.MULTIPLA)) {
+            for (String textoAlt : alternativas) {
+                if (textoAlt != null && !textoAlt.trim().isEmpty()) {
+                    Alternativa alt = new Alternativa(textoAlt.trim(), questao);
+                    alternativaDAO.salvar(alt);
+                }
+            }
+        }
 
         resp.sendRedirect("formularios?action=gerenciarQuestoes&id=" + formularioId);
     }

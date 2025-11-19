@@ -65,29 +65,7 @@
               </div>
               <span class="help-text">Se marcado, as respostas não serão vinculadas ao nome do aluno.</span>
             </div>
-            
-            <%-- Campo Perfis Destinados (Checkboxes) (RF07) --%>
-            <div class="field">
-              <label class="label">Perfis Destinados (RF07)</label>
-              <div class="choice-group">
-                <%-- Função JSTL para verificar se um perfil está na lista --%>
-                <c:forEach var="perfil" items="${perfis}">
-                  <c:set var="perfilSelecionado" value="false" />
-                  <c:forEach var="perfilForm" items="${formulario.perfisDestinados}">
-                    <c:if test="${perfil.id == perfilForm.id}">
-                      <c:set var="perfilSelecionado" value="true" />
-                    </c:if>
-                  </c:forEach>
-                  
-                  <label class="option-control checkbox">
-                    <input type="checkbox" name="perfisDestinados" value="${perfil.id}"
-                           ${perfilSelecionado ? 'checked' : ''} />
-                    <span class="option-label"><c:out value="${perfil.nome}" /></span>
-                  </label>
-                </c:forEach>
-              </div>
-              <span class="help-text">Selecione quais perfis poderão responder este formulário.</span>
-            </div>
+          
 
               <div class="field">
                   <label class="label">Turmas que receberão este formulário</label>

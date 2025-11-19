@@ -24,9 +24,13 @@ public class FormularioDAO {
 
     public Formulario buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Busca o formulário e já carrega os perfis (versão padrão)
             return session.createQuery(
-                "from Formulario f left join fetch f.perfisDestinados where f.id = :id", Formulario.class)
+                "select distinct f from Formulario f " +
+                "left join fetch f.processoAvaliativo " + 
+                "left join fetch f.perfisDestinados " +   
+                "left join fetch f.avaliacoes a " +       
+                "left join fetch a.turma " +              
+                "where f.id = :id", Formulario.class)
                 .setParameter("id", id)
                 .uniqueResult();
         }

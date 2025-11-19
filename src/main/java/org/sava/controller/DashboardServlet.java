@@ -35,29 +35,32 @@ public class DashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         
-        HttpSession session = req.getSession(false); // Pega a sessão sem criar uma nova
+        HttpSession session = req.getSession(false);
 
-        // 1. Verifica se o usuário está logado
+        // 1. Segurança Básica
         if (session == null || session.getAttribute("usuarioLogado") == null) {
-            resp.sendRedirect("login"); // Se não está logado, manda pro login
+            resp.sendRedirect("login");
             return;
         }
 
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
 
-        // 2. Busca as avaliações (RF12)
-        // Lista de todas as avaliações que o aluno deve fazer
-        List<Avaliacao> todasAvaliacoes = avaliacaoDAO.listarPorAlunoId(usuarioLogado.getId());
+        // Se NÃO for Aluno, redireciona direto para a tela de Relatórios/Resultados.
+        // Assim, o Admin nunca vê a tela vazia.
+        if (!usuarioLogado.getPerfil().getNome().equalsIgnoreCase("Aluno")) {
+            resp.sendRedirect("relatorios");
+            return; // Encerra a execução aqui
+        }
+        // ---------------------------
 
-        // 3. Busca as que ele já respondeu (RF13)
+        // 2. Lógica Exclusiva de ALUNO (Carrega os cards de resposta)
+        List<Avaliacao> todasAvaliacoes = avaliacaoDAO.listarPorUsuario(usuarioLogado.getId());
         List<AvaliacaoRespondida> jaRespondidas = respondidaDAO.listarPorAlunoId(usuarioLogado.getId());
         
-        // Cria um Set com os IDs das avaliações já respondidas para consulta rápida
         Set<Integer> idsRespondidos = jaRespondidas.stream()
                                     .map(ar -> ar.getAvaliacao().getId())
                                     .collect(Collectors.toSet());
 
-        // 4. Separa as listas
         List<Avaliacao> pendentes = new ArrayList<>();
         List<Avaliacao> respondidas = new ArrayList<>();
 
@@ -69,12 +72,10 @@ public class DashboardServlet extends HttpServlet {
             }
         }
 
-        // 5. Envia os dados para o JSP
         req.setAttribute("usuarioLogado", usuarioLogado);
         req.setAttribute("pendentes", pendentes);
         req.setAttribute("respondidas", respondidas);
         
-        // 6. Encaminha para o seu dashboard.jsp
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp");
         dispatcher.forward(req, resp);
     }
