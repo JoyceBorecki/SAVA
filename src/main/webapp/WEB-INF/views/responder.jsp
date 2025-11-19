@@ -12,7 +12,7 @@
     <main class="page-wrap">
       <div class="container">
       
-        <form action="responder" method="post" novalidate>
+        <form action="responder" method="post">
           <%-- ID da Avaliação (o "O quê" + "Para quem") --%>
           <input type="hidden" name="avaliacaoId" value="${avaliacao.id}" />
 

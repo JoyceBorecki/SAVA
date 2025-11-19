@@ -21,7 +21,7 @@
         </section>
 
         <section class="card card-padding">
-          <form class="form-grid" action="avaliacoes" method="post" novalidate>
+          <form class="form-grid" action="avaliacoes" method="post">
             
             <%-- Campo 1: Formulário (Dropdown) --%>
             <div class="field">

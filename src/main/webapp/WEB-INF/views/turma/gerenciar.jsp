@@ -109,7 +109,7 @@
           </div>
           
           <%-- Formulário para adicionar Professor --%>
-          <form class="form-inline" action="turmas" method="post" novalidate>
+          <form class="form-inline" action="turmas" method="post">
             <input type="hidden" name="action" value="adicionarParticipante" />
             <input type="hidden" name="turmaId" value="${turma.id}" />
             <input type="hidden" name="tipo" value="professor" />
@@ -159,7 +159,7 @@
           </div>
           
           <%-- Formulário para adicionar Aluno --%>
-          <form class="form-inline" action="turmas" method="post" novalidate>
+          <form class="form-inline" action="turmas" method="post">
             <input type="hidden" name="action" value="adicionarParticipante" />
             <input type="hidden" name="turmaId" value="${turma.id}" />
             <input type="hidden" name="tipo" value="aluno" />

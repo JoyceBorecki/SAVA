@@ -85,7 +85,7 @@
         <section class="card card-padding section">
           <h3 style="margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Nova Questão</h3>
           
-          <form class="form-grid" action="formularios" method="post" id="formQuestao" novalidate>
+          <form class="form-grid" action="formularios" method="post" id="formQuestao">
             <input type="hidden" name="action" value="adicionarQuestao" />
             <input type="hidden" name="formularioId" value="${formulario.id}" />
 

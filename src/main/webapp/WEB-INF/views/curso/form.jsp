@@ -21,7 +21,7 @@
         </section>
 
         <section class="card card-padding">
-          <form class="form-grid" action="cursos" method="post" novalidate>
+          <form class="form-grid" action="cursos" method="post">
             
             <input type="hidden" name="id" value="<c:out value='${curso.id}' />" />
 

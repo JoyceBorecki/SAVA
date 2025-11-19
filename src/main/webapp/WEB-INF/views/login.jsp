@@ -49,7 +49,7 @@
                 </div>
             </c:if>
 
-            <form class="form-grid" action="login" method="post" novalidate>
+            <form class="form-grid" action="login" method="post">
                 <div class="field">
                     <label class="label" for="email">E-mail institucional</label>
                     <input id="email" class="input" type="email" name="email" placeholder="email@ufpr.br" required value="<c:out value='${param.email}' />" />

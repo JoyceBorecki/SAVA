@@ -81,7 +81,7 @@
         </section>
 
         <section class="card card-padding">
-            <form class="form-grid" action="turmas" method="post" id="formTurma" novalidate>
+            <form class="form-grid" action="turmas" method="post" id="formTurma">
                 <input type="hidden" name="id" value="${turma.id}"/>
                 <div class="field">
                     <label class="label">Disciplina</label>

@@ -31,7 +31,7 @@
 
         <section class="card card-padding">
 
-            <form class="form-grid" action="usuarios" method="post" id="formUsuario" novalidate>
+            <form class="form-grid" action="usuarios" method="post" id="formUsuario">
                 <input type="hidden" name="id" value="${usuario.id != null ? usuario.id : ''}" />
 
                 <div class="field">

@@ -22,7 +22,7 @@
         </section>
 
         <section class="card card-padding">
-          <form class="form-grid" action="formularios" method="post" novalidate>
+          <form class="form-grid" action="formularios" method="post">
             
             <input type="hidden" name="id" value="<c:out value='${formulario.id}' />" />
 

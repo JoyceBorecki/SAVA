@@ -22,7 +22,7 @@
 
         <section class="card card-padding">
           <%-- O formulário aponta para o nosso servlet --%>
-          <form class="form-grid" action="disciplinas" method="post" novalidate>
+          <form class="form-grid" action="disciplinas" method="post">
             
             <%-- Campo oculto para o ID (essencial para edição) --%>
             <input type="hidden" name="id" value="<c:out value='${disciplina.id}' />" />
