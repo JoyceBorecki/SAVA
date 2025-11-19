@@ -23,10 +23,7 @@
 
         <section class="card card-padding">
           <form class="form-grid" action="formularios" method="post">
-            
             <input type="hidden" name="id" value="<c:out value='${formulario.id}' />" />
-
-            <%-- Campo Título --%>
             <div class="field">
               <label class="label" for="titulo">Título do Formulário</label>
               <input id="titulo" class="input" type="text" name="titulo"
@@ -36,7 +33,6 @@
               <span class="help-text">Nome de identificação do formulário.</span>
             </div>
 
-            <%-- Campo Processo Avaliativo (Dropdown) --%>
             <div class="field">
               <label class="label" for="processoId">Processo Avaliativo</label>
               <select id="processoId" class="select" name="processoId" required>
@@ -53,7 +49,6 @@
               <span class="help-text">Define a qual período este formulário pertence.</span>
             </div>
 
-            <%-- Campo Anônimo (Checkbox) --%>
             <div class="field">
               <label class="label">Configuração de Anonimato (RF11)</label>
               <div class="choice-group">
@@ -65,7 +60,6 @@
               </div>
               <span class="help-text">Se marcado, as respostas não serão vinculadas ao nome do aluno.</span>
             </div>
-          
 
               <div class="field">
                   <label class="label">Turmas que receberão este formulário</label>
@@ -87,13 +81,11 @@
                   </div>
                   <span class="help-text">Selecione as turmas que receberão este formulário.</span>
               </div>
-            
-            <%-- Botões de Ação --%>
+
             <div class="form-footer">
               <a href="formularios?action=listar" class="btn btn-secondary btn-sm">Cancelar</a>
               <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
             </div>
-            
           </form>
         </section>
       </div>

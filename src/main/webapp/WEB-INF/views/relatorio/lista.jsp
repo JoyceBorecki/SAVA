@@ -8,8 +8,7 @@
 <html lang="pt-BR">
   <head>
     <jsp:include page="/WEB-INF/views/includes/_head.jspf" />
-    
-    <%-- ESTILOS IDÊNTICOS AO DE FORMULÁRIOS E TURMAS --%>
+
     <style>
       .table-wrapper {
         width: 100%;
@@ -66,8 +65,6 @@
             <h1 class="page-title">Resultados das Avaliações</h1>
             <p class="page-subtitle">Selecione um formulário para visualizar os relatórios.</p>
           </section>
-          
-          <%-- Mantendo a estrutura vazia para garantir o mesmo espaçamento --%>
           <div class="btn-row"></div>
         </div>
 
@@ -95,13 +92,11 @@
                     <td>
                         <c:out value="${form.titulo}" />
                         <c:if test="${form.anonimo}">
-                             <%-- Pequeno badge discreto --%>
                             <span style="font-size: 11px; color: #E68A00; background: #FFF3E0; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">Anônimo</span>
                         </c:if>
                     </td>
                     <td><c:out value="${form.processoAvaliativo.nome}" /></td>
                     <td class="actions">
-                        <%-- Link textual simples, igual nas outras telas --%>
                         <a href="relatorios?action=ver&id=${form.id}">
                             Ver Resultados
                         </a>
@@ -112,7 +107,6 @@
             </table>
           </div>
         </section>
-        
       </div>
     </main>
   </body>

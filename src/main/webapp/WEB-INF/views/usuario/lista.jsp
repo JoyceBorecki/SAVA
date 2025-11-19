@@ -2,15 +2,13 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <c:set var="pageTitle" value="Gestão de Usuários" />
-<%-- Você pode alterar o "currentNav" para a área administrativa --%>
 <c:set var="currentNav" value="admin_usuarios" /> 
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <%-- Incluindo o head padrão [cite: 1-3] --%>
+
     <jsp:include page="/WEB-INF/views/includes/_head.jspf" />
-    
-    <%-- Estilo simples para a tabela, para combinar com o resto --%>
+
     <style>
       .table-wrapper {
         width: 100%;
@@ -57,7 +55,6 @@
     </style>
   </head>
   <body>
-    <%-- Incluindo o header padrão [cite: 3-4] --%>
     <jsp:include page="/WEB-INF/views/includes/_header.jspf" />
     
     <main class="page-wrap">
@@ -93,7 +90,6 @@
                     <td><c:out value="${usuario.nome}" /></td>
                     <td><c:out value="${usuario.email}" /></td>
                     <td>
-                      <%-- Exibe o nome do perfil --%>
                       <c:out value="${usuario.perfil.nome}" />
                     </td>
                     <td class="actions">

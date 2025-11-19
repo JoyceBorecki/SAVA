@@ -25,7 +25,6 @@
             
             <input type="hidden" name="id" value="<c:out value='${processo.id}' />" />
 
-            <%-- Campo Nome --%>
             <div class="field">
               <label class="label" for="nome">Nome do Processo</label>
               <input id="nome" class="input" type="text" name="nome"
@@ -35,7 +34,6 @@
               <span class="help-text">Nome de identificação do período.</span>
             </div>
 
-            <%-- Campo Data Início --%>
             <div class="field">
               <label class="label" for="dataInicio">Data de Início</label>
               <input id="dataInicio" class="input" type="date" name="dataInicio"
@@ -43,8 +41,7 @@
                      required />
               <span class="help-text">Data em que os formulários serão abertos.</span>
             </div>
-            
-            <%-- Campo Data Fim --%>
+
             <div class="field">
               <label class="label" for="dataFim">Data de Fim</label>
               <input id="dataFim" class="input" type="date" name="dataFim"
@@ -52,13 +49,11 @@
                      required />
               <span class="help-text">Data de encerramento das respostas.</span>
             </div>
-            
-            <%-- Botões de Ação --%>
+
             <div class="form-footer">
               <a href="processos?action=listar" class="btn btn-secondary btn-sm">Cancelar</a>
               <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
             </div>
-            
           </form>
         </section>
       </div>

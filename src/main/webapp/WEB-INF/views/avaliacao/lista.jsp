@@ -7,8 +7,7 @@
 <html lang="pt-BR">
   <head>
     <jsp:include page="/WEB-INF/views/includes/_head.jspf" />
-    
-    <%-- Estilo da tabela (reaproveitado) --%>
+
     <style>
       .table-wrapper { width: 100%; overflow-x: auto; }
       .data-table { width: 100%; border-collapse: collapse; margin-top: 16px; }

@@ -10,9 +10,8 @@
   <head>
     <jsp:include page="/WEB-INF/views/includes/_head.jspf" />
     <style>
-      /* Estilo para a área de alternativas dinâmicas */
       #areaAlternativas {
-        display: none; /* Escondido por padrão (aparece se não for Aberta) */
+        display: none;
         background: #F9FAFB;
         padding: 16px;
         border-radius: 8px;
@@ -81,7 +80,6 @@
             </div>
         </div>
 
-        <%-- 1. CARD DE CRIAÇÃO (MELHORADO) --%>
         <section class="card card-padding section">
           <h3 style="margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Nova Questão</h3>
           
@@ -117,11 +115,9 @@
               </div>
             </div>
 
-            <%-- ÁREA DINÂMICA DE ALTERNATIVAS --%>
             <div id="areaAlternativas">
                 <label class="label" style="margin-bottom: 8px; display:block;">Opções de Resposta</label>
                 <div id="listaInputs">
-                    <%-- Inputs serão injetados aqui via JS --%>
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="addInputAlternativa()" style="margin-top: 8px;">
                     + Adicionar Opção
@@ -143,7 +139,6 @@
           </form>
         </section>
 
-        <%-- 2. LISTA DE QUESTÕES EXISTENTES --%>
         <section class="section" style="margin-top: 40px;">
           <h2 style="font-size: 18px; margin-bottom: 16px;">Questões Cadastradas</h2>
           
@@ -176,7 +171,6 @@
                 </div>
               </header>
 
-              <%-- Se não for ABERTA, mostra as alternativas cadastradas --%>
               <c:if test="${questao.tipo != 'ABERTA'}">
                 <div class="questao-body">
                   <strong style="display:block; margin-bottom: 10px; font-size: 13px; color: #555;">Alternativas:</strong>
@@ -194,7 +188,6 @@
                     </c:forEach>
                   </ul>
 
-                  <%-- Mini-form para adicionar MAIS alternativas depois --%>
                   <form action="formularios" method="post" style="margin-top: 15px; display: flex; gap: 8px;">
                     <input type="hidden" name="action" value="adicionarAlternativa" />
                     <input type="hidden" name="formularioId" value="${formulario.id}" />
@@ -211,7 +204,6 @@
       </div>
     </main>
 
-    <%-- SCRIPTS PARA O FORMULÁRIO DINÂMICO --%>
     <script>
         const areaAlternativas = document.getElementById('areaAlternativas');
         const listaInputs = document.getElementById('listaInputs');
@@ -219,7 +211,6 @@
         function toggleAlternativas(mostrar) {
             if (mostrar) {
                 areaAlternativas.style.display = 'block';
-                // Se estiver vazio, adiciona 2 campos automaticamente para começar
                 if (listaInputs.children.length === 0) {
                     addInputAlternativa();
                     addInputAlternativa();
@@ -240,8 +231,7 @@
             
             listaInputs.appendChild(div);
         }
-        
-        // Inicializa estado
+
         toggleAlternativas(false);
     </script>
   </body>

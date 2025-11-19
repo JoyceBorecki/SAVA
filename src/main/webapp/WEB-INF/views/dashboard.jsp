@@ -21,7 +21,6 @@
             </p>
         </section>
 
-        <%-- Se não tiver nada pendente nem respondido --%>
         <c:if test="${empty pendentes and empty respondidas}">
             <div class="card card-padding" style="text-align:center; padding: 40px;">
                 <h3 style="color:var(--text-subtle);">Nenhuma avaliação disponível no momento.</h3>
@@ -30,7 +29,6 @@
         </c:if>
 
         <section class="grid-cards">
-            <%-- Cards de Pendentes --%>
             <c:forEach var="avaliacao" items="${pendentes}">
                 <article class="card card-padding card-course">
                     <div class="top">
@@ -61,7 +59,6 @@
                 </article>
             </c:forEach>
 
-            <%-- Cards de Respondidas --%>
             <c:forEach var="avaliacao" items="${respondidas}">
                 <article class="card card-padding card-course" style="opacity: 0.7;">
                     <div class="top">

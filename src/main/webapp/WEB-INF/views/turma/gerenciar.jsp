@@ -9,7 +9,7 @@
 <html lang="pt-BR">
   <head>
     <jsp:include page="/WEB-INF/views/includes/_head.jspf" />
-    <%-- Estilos da tabela (reaproveitado) e do form-inline --%>
+
     <style>
       .table-wrapper { width: 100%; overflow-x: auto; }
       .data-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
@@ -37,13 +37,12 @@
         border-radius: 0 0 var(--card-radius) var(--card-radius);
       }
       .form-inline .select {
-        flex-grow: 1; /* Campo de select ocupa mais espaço */
+        flex-grow: 1;
       }
       .form-inline .btn-sm {
-        height: 48px; /* Alinhar com select */
+        height: 48px;
         flex-shrink: 0;
       }
-      /* Ajuste para o card não ter padding no corpo */
       .card-no-padding {
          background: var(--card-bg);
          border-radius: var(--card-radius);
@@ -73,7 +72,6 @@
           </p>
         </section>
 
-        <%-- 1. PAINEL DE PROFESSORES --%>
         <section class="card-no-padding section">
           <div class="card-header">
             <h3>Professores</h3>
@@ -107,8 +105,7 @@
               </tbody>
             </table>
           </div>
-          
-          <%-- Formulário para adicionar Professor --%>
+
           <form class="form-inline" action="turmas" method="post">
             <input type="hidden" name="action" value="adicionarParticipante" />
             <input type="hidden" name="turmaId" value="${turma.id}" />
@@ -123,7 +120,6 @@
           </form>
         </section>
 
-        <%-- 2. PAINEL DE ALUNOS --%>
         <section class="card-no-padding section">
           <div class="card-header">
             <h3>Alunos Matriculados</h3>
@@ -157,8 +153,7 @@
               </tbody>
             </table>
           </div>
-          
-          <%-- Formulário para adicionar Aluno --%>
+
           <form class="form-inline" action="turmas" method="post">
             <input type="hidden" name="action" value="adicionarParticipante" />
             <input type="hidden" name="turmaId" value="${turma.id}" />
@@ -176,7 +171,6 @@
         <div class="form-footer">
            <a href="turmas?action=listar" class="btn btn-secondary btn-sm">Voltar para Turmas</a>
         </div>
-
       </div>
     </main>
   </body>

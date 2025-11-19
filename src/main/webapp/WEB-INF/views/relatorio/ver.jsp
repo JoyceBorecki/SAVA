@@ -17,13 +17,12 @@
         .alt-row { display: grid; grid-template-columns: 2fr 1fr; align-items: center; gap: 10px; margin-bottom: 8px; }
         .resp-box { background: #F9FAFB; padding: 10px; border-left: 4px solid #0C4DB2; margin-top: 8px; }
         .resp-author { font-weight: bold; font-size: 12px; color: #666; margin-bottom: 4px; }
-        
-        /* Espaço e alinhamento do rodapé */
+
         .page-footer-space {
             margin-top: 30px;
             padding-bottom: 60px;
             display: flex;
-            justify-content: flex-end; /* Alinha o botão à direita */
+            justify-content: flex-end;
         }
     </style>
 </head>
@@ -31,8 +30,7 @@
     <jsp:include page="/WEB-INF/views/includes/_header.jspf" />
     <main class="page-wrap">
         <div class="container">
-            
-            <%-- Cabeçalho sem botão de voltar --%>
+
             <div class="mb-4">
                 <h1 class="page-title" style="margin-top:10px;">Relatório: <c:out value="${formulario.titulo}" /></h1>
                 <p class="page-subtitle">
@@ -51,8 +49,7 @@
                 <c:forEach var="est" items="${estatisticas}" varStatus="loop">
                     <div class="stats-card">
                         <h3><span style="color:#0C4DB2;">Q${loop.count}.</span> <c:out value="${est.enunciado}" /></h3>
-                        
-                        <%-- QUESTÃO FECHADA (GRÁFICO) --%>
+
                         <c:if test="${est.tipo != 'ABERTA'}">
                             <div style="margin-top:15px;">
                                 <c:forEach var="entry" items="${est.contagemAlternativas}">
@@ -68,7 +65,6 @@
                             </div>
                         </c:if>
 
-                        <%-- QUESTÃO ABERTA (LISTA) --%>
                         <c:if test="${est.tipo == 'ABERTA'}">
                             <div style="margin-top:15px;">
                                 <strong>Respostas Textuais:</strong>
@@ -89,11 +85,9 @@
                 </c:forEach>
             </section>
 
-            <%-- Botão ÚNICO de Voltar no final --%>
             <div class="page-footer-space">
                 <a href="relatorios" class="btn btn-secondary btn-sm">Voltar para Lista</a>
             </div>
-
         </div>
     </main>
 </body>

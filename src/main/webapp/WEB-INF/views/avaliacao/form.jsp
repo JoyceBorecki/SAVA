@@ -14,7 +14,6 @@
     
     <main class="page-wrap">
       <div class="container">
-        
         <section class="mb-4">
           <h1 class="page-title">Aplicar Formulário</h1>
           <p class="page-subtitle">Selecione o formulário e a turma que deve respondê-lo.</p>
@@ -22,8 +21,6 @@
 
         <section class="card card-padding">
           <form class="form-grid" action="avaliacoes" method="post">
-            
-            <%-- Campo 1: Formulário (Dropdown) --%>
             <div class="field">
               <label class="label" for="formularioId">1. Selecione o Formulário</label>
               <select id="formularioId" class="select" name="formularioId" required>
@@ -37,7 +34,6 @@
               <span class="help-text">O modelo de avaliação que será usado.</span>
             </div>
 
-            <%-- Campo 2: Turma (Dropdown) --%>
             <div class="field">
               <label class="label" for="turmaId">2. Selecione a Turma</label>
               <select id="turmaId" class="select" name="turmaId" required>
@@ -50,13 +46,11 @@
               </select>
               <span class="help-text">A turma que receberá este formulário.</span>
             </div>
-            
-            <%-- Botões de Ação --%>
+
             <div class="form-footer">
               <a href="avaliacoes?action=listar" class="btn btn-secondary btn-sm">Cancelar</a>
               <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
             </div>
-            
           </form>
         </section>
       </div>

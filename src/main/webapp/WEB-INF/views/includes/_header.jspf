@@ -17,7 +17,6 @@
       <span class="brand-text">SAVA</span>
     </a>
       <nav class="main-nav" aria-label="Principal">
-        <%-- Link Principal Inteligente --%>
         <a href="${pageContext.request.contextPath}/dashboard" class="nav-link ${currentNav=='avaliacoes' ? 'active' : ''}">
           <c:choose>
               <c:when test="${isAluno}">Minhas Avaliações</c:when>
@@ -32,7 +31,6 @@
           <a href="${pageContext.request.contextPath}/turmas" class="nav-link">Turmas</a>
           <a href="${pageContext.request.contextPath}/disciplinas" class="nav-link">Disciplinas</a>
           <a href="${pageContext.request.contextPath}/cursos" class="nav-link">Cursos</a>
-          <%-- Link Novo: Relatórios --%>
           <a href="${pageContext.request.contextPath}/relatorios" class="nav-link">Relatórios</a>
           <a href="${pageContext.request.contextPath}/usuarios" class="nav-link">Usuários</a>
         </c:if>
