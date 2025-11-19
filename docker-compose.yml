@@ -14,10 +14,10 @@ services:
       - ./data/mysql:/var/lib/mysql
 
   adminer:
-    image: adminer:latest # Imagem mais leve
+    image: adminer:latest
     container_name: sava_adminer
     restart: always
     ports:
-      - "8081:8080" # A porta interna do Adminer é 8080
-    depends_on: # Garante que o mysql inicie antes
+      - "8081:8080"
+    depends_on:
       - mysql
