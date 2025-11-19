@@ -37,7 +37,6 @@ public class DashboardServlet extends HttpServlet {
         
         HttpSession session = req.getSession(false);
 
-        // 1. Segurança Básica
         if (session == null || session.getAttribute("usuarioLogado") == null) {
             resp.sendRedirect("login");
             return;
@@ -45,15 +44,11 @@ public class DashboardServlet extends HttpServlet {
 
         Usuario usuarioLogado = (Usuario) session.getAttribute("usuarioLogado");
 
-        // Se NÃO for Aluno, redireciona direto para a tela de Relatórios/Resultados.
-        // Assim, o Admin nunca vê a tela vazia.
         if (!usuarioLogado.getPerfil().getNome().equalsIgnoreCase("Aluno")) {
             resp.sendRedirect("relatorios");
             return; // Encerra a execução aqui
         }
-        // ---------------------------
 
-        // 2. Lógica Exclusiva de ALUNO (Carrega os cards de resposta)
         List<Avaliacao> todasAvaliacoes = avaliacaoDAO.listarPorUsuario(usuarioLogado.getId());
         List<AvaliacaoRespondida> jaRespondidas = respondidaDAO.listarPorAlunoId(usuarioLogado.getId());
         

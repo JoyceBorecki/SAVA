@@ -23,7 +23,6 @@ public class AvaliacaoRespondidaDAO {
 
     public AvaliacaoRespondida buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Busca a resposta e já carrega o aluno e as respostas filhas
              return session.createQuery(
                 "from AvaliacaoRespondida ar " +
                 "left join fetch ar.aluno " +
@@ -34,10 +33,6 @@ public class AvaliacaoRespondidaDAO {
         }
     }
 
-    /**
-     * Busca se um aluno específico já respondeu uma avaliação específica.
-     * Muito útil para o RF13 (garantir que responda apenas uma vez).
-     */
     public AvaliacaoRespondida buscarPorAlunoEAvaliacao(int alunoId, int avaliacaoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
@@ -46,7 +41,7 @@ public class AvaliacaoRespondidaDAO {
                 AvaliacaoRespondida.class)
                 .setParameter("alunoId", alunoId)
                 .setParameter("avaliacaoId", avaliacaoId)
-                .uniqueResult(); // Retorna um objeto ou null
+                .uniqueResult();
         }
     }
 
@@ -81,11 +76,6 @@ public class AvaliacaoRespondidaDAO {
         }
     }
 
-    /**
-     * Novo método para o DashboardServlet.
-     * Lista todas as avaliações que um aluno específico JÁ respondeu.
-     * RF13 - Garante que o aluno responda apenas uma vez.
-     */
     public List<AvaliacaoRespondida> listarPorAlunoId(int alunoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(

@@ -17,19 +17,13 @@ public class Disciplina {
     @Column(length = 20)
     private String semestre;
 
-    // Relacionamento (Muitas-para-Um)
-    // Uma disciplina pertence a um curso (conforme seu diagrama)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
 
-    // Relacionamento (Um-para-Muitos)
-    // Uma disciplina tem várias turmas
-    // "mappedBy" indica que a classe Turma é a dona do relacionamento
     @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Turma> turmas = new ArrayList<>(); 
-    
-    // --- Construtores ---
+
     public Disciplina() {}
 
     public Disciplina(String nome, String semestre, Curso curso) {
@@ -38,7 +32,6 @@ public class Disciplina {
         this.curso = curso;
     }
 
-    // --- Getters e Setters ---
     public int getId() {
         return id;
     }

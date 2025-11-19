@@ -38,7 +38,6 @@ public class AvaliacaoServlet extends HttpServlet {
 
         switch (action) {
             case "novo" -> mostrarFormularioNovo(req, resp);
-            // Não faz sentido "editar" uma aplicação, apenas excluir
             case "excluir" -> excluirAvaliacao(req, resp);
             default -> listarAvaliacoes(req, resp);
         }
@@ -47,12 +46,10 @@ public class AvaliacaoServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        // POST é usado apenas para salvar uma nova aplicação
         salvarAvaliacao(req, resp);
     }
 
     private void carregarDependencias(HttpServletRequest req) {
-        // Carrega listas para os dropdowns do formulário
         List<Formulario> formularios = formularioDAO.listar();
         List<Turma> turmas = turmaDAO.listar();
         req.setAttribute("formularios", formularios);
@@ -69,7 +66,7 @@ public class AvaliacaoServlet extends HttpServlet {
 
     private void mostrarFormularioNovo(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        carregarDependencias(req); // Carrega formulários e turmas
+        carregarDependencias(req);
         req.setAttribute("avaliacao", new Avaliacao());
         RequestDispatcher dispatcher = req.getRequestDispatcher("/avaliacao/form.jsp");
         dispatcher.forward(req, resp);
@@ -81,13 +78,12 @@ public class AvaliacaoServlet extends HttpServlet {
         int formularioId = Integer.parseInt(req.getParameter("formularioId"));
         int turmaId = Integer.parseInt(req.getParameter("turmaId"));
 
-        // Busca os objetos completos
         Formulario formulario = formularioDAO.buscarPorId(formularioId);
         Turma turma = turmaDAO.buscarPorId(turmaId);
 
         if (formulario != null && turma != null) {
             Avaliacao avaliacao = new Avaliacao(formulario, turma);
-            avaliacaoDAO.salvar(avaliacao); // Usar salvar, não salvarOuAtualizar
+            avaliacaoDAO.salvar(avaliacao);
         }
         
         resp.sendRedirect("avaliacoes?action=listar");

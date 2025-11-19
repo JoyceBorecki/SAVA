@@ -27,10 +27,6 @@ public class DisciplinaDAO {
         }
     }
 
-    /**
-     * CORRIGIDO: Usa FETCH JOIN para resolver o LazyInitializationException.
-     * Isso garante que o objeto 'curso' seja carregado antes de a sessão fechar.
-     */
     public List<Disciplina> listar() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(

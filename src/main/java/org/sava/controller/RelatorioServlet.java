@@ -51,8 +51,7 @@ public class RelatorioServlet extends HttpServlet {
 
     private void listarRelatoriosDisponiveis(HttpServletRequest req, HttpServletResponse resp, Usuario usuario) 
             throws ServletException, IOException {
-        // Simplesmente lista todos os formulários para o Admin/Coord escolher qual resultado ver
-        // (Numa versão futura, filtrar apenas formulários das turmas do Professor)
+
         List<Formulario> formularios = formularioDAO.listar();
         req.setAttribute("formularios", formularios);
         
@@ -66,23 +65,19 @@ public class RelatorioServlet extends HttpServlet {
         int formularioId = Integer.parseInt(req.getParameter("id"));
         Formulario formulario = formularioDAO.buscarPorId(formularioId);
 
-        // GERA AS ESTATÍSTICAS (RF17)
         List<EstatisticaQuestao> estatisticas = relatorioDAO.gerarEstatisticas(formularioId);
 
-        // REGRA DE NEGÓCIO DE VISIBILIDADE (RF19 vs RF20)
         boolean isAdmin = usuario.getPerfil().getNome().equals("Administrador");
         boolean mostrarNomes = isAdmin || !formulario.isAnonimo();
 
-        // Se for anônimo e não for admin, limpamos os nomes das respostas abertas na memória antes de enviar para a JSP
         if (!mostrarNomes) {
             for (EstatisticaQuestao est : estatisticas) {
                 if (!est.getRespostasAbertas().isEmpty()) {
-                    // Substitui nomes reais por "Aluno (Anônimo)"
                     var mapAnonimo = new java.util.HashMap<String, String>();
                     for (String resposta : est.getRespostasAbertas().values()) {
                         mapAnonimo.put("Anônimo", resposta);
                     }
-                    // Truque sujo para limpar o mapa original, na prática criaríamos um novo DTO
+
                     est.getRespostasAbertas().clear();
                     est.getRespostasAbertas().putAll(mapAnonimo);
                 }

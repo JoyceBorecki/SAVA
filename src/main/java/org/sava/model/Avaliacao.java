@@ -12,24 +12,17 @@ public class Avaliacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Relacionamento (Muitas-para-Um)
-    // Resolve o erro na lista "avaliacoes" de Formulario.java
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formulario_id", nullable = false)
-    private Formulario formulario; // O formulário que foi aplicado
+    private Formulario formulario;
 
-    // Relacionamento (Muitas-para-Um)
-    // Resolve o erro na lista "avaliacoes" de Turma.java
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "turma_id", nullable = false)
-    private Turma turma; // A turma que foi avaliada
+    private Turma turma;
 
-    // Relacionamento (Um-para-Muitos) com AvaliacaoRespondida
-    // (Item 8 do plano)
     @OneToMany(mappedBy = "avaliacao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AvaliacaoRespondida> avaliacoesRespondidas = new ArrayList<>(); // <--- NOVO ERRO ESPERADO AQUI
+    private List<AvaliacaoRespondida> avaliacoesRespondidas = new ArrayList<>();
 
-    // --- Construtores ---
     public Avaliacao() {}
 
     public Avaliacao(Formulario formulario, Turma turma) {
@@ -37,7 +30,6 @@ public class Avaliacao {
         this.turma = turma;
     }
 
-    // --- Getters e Setters ---
     public int getId() {
         return id;
     }

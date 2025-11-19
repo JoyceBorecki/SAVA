@@ -35,28 +35,20 @@ public class FormularioDAO {
                 .uniqueResult();
         }
     }
-    
-    /**
-     * NOVO MÉTODO CORRIGIDO: Busca o formulário com suas Questões e ProcessoAvaliativo
-     * para evitar LazyInitializationException na tela de gerenciamento de questões.
-     */
+
     public Formulario buscarPorIdComQuestoes(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Usa distinct para evitar duplicação de resultados devido ao join fetch
             return session.createQuery(
                 "select distinct f from Formulario f " +
-                "join fetch f.processoAvaliativo " + // Carrega o Processo (necessário para o título)
-                "left join fetch f.questoes q " + // Carrega as Questões
-                "left join fetch q.alternativas " + // Carrega as Alternativas das Questões
+                "join fetch f.processoAvaliativo " +
+                "left join fetch f.questoes q " +
+                "left join fetch q.alternativas " +
                 "where f.id = :id", Formulario.class)
                 .setParameter("id", id)
                 .uniqueResult();
         }
     }
 
-    /**
-     * CORRIGIDO: Usa FETCH JOIN para carregar o Processo Avaliativo, evitando LazyInitializationException.
-     */
     public List<Formulario> listar() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("from Formulario f join fetch f.processoAvaliativo", Formulario.class).list();

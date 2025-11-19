@@ -14,18 +14,15 @@ public class RelatorioDAO {
         List<EstatisticaQuestao> resultado = new ArrayList<>();
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // 1. Busca todas as questões do formulário
             List<Questao> questoes = session.createQuery(
                 "from Questao q where q.formulario.id = :fid order by q.id", Questao.class)
                 .setParameter("fid", formularioId)
                 .list();
 
-            // 2. Para cada questão, calcula os resultados
             for (Questao q : questoes) {
                 EstatisticaQuestao est = new EstatisticaQuestao(q.getEnunciado(), q.getTipo().toString());
 
                 if (q.getTipo() == Questao.TipoQuestao.ABERTA) {
-                    // Questões Abertas: Traz o texto e o nome do aluno
                     List<Object[]> respostas = session.createQuery(
                         "select r.avaliacaoRespondida.aluno.nome, r.textoResposta " +
                         "from Resposta r where r.questao.id = :qid", Object[].class)
@@ -39,7 +36,6 @@ public class RelatorioDAO {
                     }
 
                 } else {
-                    // Questões Fechadas: Faz a contagem (GROUP BY)
                     List<Object[]> contagem = session.createQuery(
                         "select alt.texto, count(r.id) " +
                         "from Resposta r join r.alternativasMarcadas alt " +

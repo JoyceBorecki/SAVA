@@ -23,7 +23,6 @@ public class QuestaoDAO {
 
     public Questao buscarPorId(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Inclui fetch join para o formulário e alternativas
             return session.createQuery(
                 "from Questao q left join fetch q.alternativas left join fetch q.formulario where q.id = :id", Questao.class)
                 .setParameter("id", id)
@@ -31,9 +30,6 @@ public class QuestaoDAO {
         }
     }
 
-    /**
-     * CORRIGIDO: Usa FETCH JOIN para carregar as alternativas, evitando LazyInitializationException.
-     */
     public List<Questao> listarPorFormularioId(int formularioId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
              return session.createQuery(
@@ -45,8 +41,6 @@ public class QuestaoDAO {
                 .list();
         }
     }
-    
-    // ... (restante do código) ...
 
     public void atualizar(Questao questao) {
         Transaction tx = null;

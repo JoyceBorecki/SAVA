@@ -87,11 +87,6 @@ public class AvaliacaoDAO {
         }
     }
 
-    /**
-     * VERSÃO ESTRITA (SÓ ALUNOS):
-     * Retorna as avaliações apenas se o usuário estiver matriculado na lista de ALUNOS da turma.
-     * Atende rigorosamente ao RF12.
-     */
     public List<Avaliacao> listarPorUsuario(int alunoId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
@@ -101,8 +96,8 @@ public class AvaliacaoDAO {
                  "join fetch a.turma t " +
                  "join fetch t.disciplina d " +
                  "left join fetch t.professores profDisplay " + 
-                 "join t.alunos al " + // Join obrigatório com a lista de alunos
-                 "where al.id = :uid", // O usuário TEM que ser um dos alunos
+                 "join t.alunos al " +
+                 "where al.id = :uid",
                     Avaliacao.class
             )
             .setParameter("uid", alunoId)

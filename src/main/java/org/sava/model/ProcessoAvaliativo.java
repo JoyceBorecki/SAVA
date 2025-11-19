@@ -22,12 +22,9 @@ public class ProcessoAvaliativo {
     @Column(name = "data_fim")
     private LocalDate dataFim;
 
-    // Relacionamento (Um-para-Muitos)
-    // Um processo tem vários formulários
     @OneToMany(mappedBy = "processoAvaliativo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Formulario> formularios = new ArrayList<>(); // <--- ERRO ESPERADO AQUI
+    private List<Formulario> formularios = new ArrayList<>();
 
-    // --- Construtores ---
     public ProcessoAvaliativo() {}
 
     public ProcessoAvaliativo(String nome, LocalDate dataInicio, LocalDate dataFim) {
@@ -36,7 +33,6 @@ public class ProcessoAvaliativo {
         this.dataFim = dataFim;
     }
 
-    // --- Getters e Setters ---
     public int getId() {
         return id;
     }

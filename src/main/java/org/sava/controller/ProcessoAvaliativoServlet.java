@@ -47,8 +47,7 @@ public class ProcessoAvaliativoServlet extends HttpServlet {
             throws ServletException, IOException {
         List<ProcessoAvaliativo> lista = processoDAO.listar();
         req.setAttribute("processos", lista);
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/processo/lista.jsp");
         dispatcher.forward(req, resp);
     }
@@ -56,8 +55,7 @@ public class ProcessoAvaliativoServlet extends HttpServlet {
     private void mostrarFormularioNovo(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.setAttribute("processo", new ProcessoAvaliativo());
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/processo/form.jsp");
         dispatcher.forward(req, resp);
     }
@@ -67,8 +65,7 @@ public class ProcessoAvaliativoServlet extends HttpServlet {
         int id = Integer.parseInt(req.getParameter("id"));
         ProcessoAvaliativo processo = processoDAO.buscarPorId(id);
         req.setAttribute("processo", processo);
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/processo/form.jsp");
         dispatcher.forward(req, resp);
     }
@@ -78,8 +75,7 @@ public class ProcessoAvaliativoServlet extends HttpServlet {
         
         String idParam = req.getParameter("id");
         String nome = req.getParameter("nome");
-        
-        // Tratamento para campos de data que podem vir vazios
+
         LocalDate dataInicio = null;
         if (req.getParameter("dataInicio") != null && !req.getParameter("dataInicio").isEmpty()) {
             dataInicio = LocalDate.parse(req.getParameter("dataInicio"));

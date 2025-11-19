@@ -13,12 +13,8 @@ import java.util.Set;
 public class Main {
     public static void main(String[] args) {
         try {
-            // Este método agora popula TUDO (Perfis, Usuários, Cursos, Disciplinas, etc.)
             popularDadosIniciais();
-
-            // Este método lista os dados para verificar
             testarListagem();
-
         } catch (Exception e) {
             System.err.println("Ocorreu um erro fatal durante a execução do Main.");
             e.printStackTrace();
@@ -28,14 +24,9 @@ public class Main {
         }
     }
 
-    /**
-     * Popula o banco de dados com dados de teste (Cursos, Processos, Disciplinas, Turmas)
-     * SÓ SE O BANCO ESTIVER VAZIO, para evitar duplicatas.
-     */
     private static void popularDadosIniciais() {
         System.out.println("\n--- INICIALIZANDO DADOS BÁSICOS E DADOS DE TESTE ---");
 
-        // Inicializa todos os DAOs necessários
         PerfilDAO perfilDAO = new PerfilDAO();
         UsuarioDAO usuarioDAO = new UsuarioDAO();
         CursoDAO cursoDAO = new CursoDAO();
@@ -44,8 +35,6 @@ public class Main {
         TurmaDAO turmaDAO = new TurmaDAO();
 
         try {
-            // --- 1. CRIA PERFIS ---
-            // Só cria se o perfil "Administrador" não existir
             Perfil pAdmin = perfilDAO.buscarPorNome("Administrador");
             Perfil pCoord, pProf, pAluno;
 
@@ -67,18 +56,15 @@ public class Main {
                 pAluno = perfilDAO.buscarPorNome("Aluno");
             }
 
-            // --- 2. CRIA USUÁRIOS (Admin, Professores, Alunos) ---
             String senhaAdmin = BCrypt.hashpw("admin123", BCrypt.gensalt());
             String senhaProf = BCrypt.hashpw("prof123", BCrypt.gensalt());
             String senhaAluno = BCrypt.hashpw("aluno123", BCrypt.gensalt());
 
-            // Admin
             if (usuarioDAO.buscarPorEmail("admin@sava.com") == null) {
                 System.out.println("-> Criando Usuário Admin...");
                 usuarioDAO.salvar(new Usuario("Admin SAVA", "admin@sava.com", senhaAdmin, pAdmin));
             }
 
-            // Professores
             Usuario prof1 = usuarioDAO.buscarPorEmail("carlos@sava.com");
             Usuario prof2 = usuarioDAO.buscarPorEmail("ana@sava.com");
             Usuario prof3 = usuarioDAO.buscarPorEmail("beatriz@sava.com");
@@ -92,8 +78,7 @@ public class Main {
                 usuarioDAO.salvar(prof2);
                 usuarioDAO.salvar(prof3);
             }
-            
-            // Alunos (15)
+
             System.out.println("-> Criando Alunos...");
             Usuario[] alunos = new Usuario[15];
             for (int i = 0; i < 15; i++) {
@@ -106,9 +91,6 @@ public class Main {
             }
             System.out.println("-> " + alunos.length + " Alunos criados/verificados.");
 
-
-            // --- 3. CRIA 5 CURSOS ---
-            // Só cria se a lista de cursos estiver vazia
             List<Curso> cursos = cursoDAO.listar();
             if (cursos.isEmpty()) {
                 System.out.println("-> Criando 5 Cursos...");
@@ -123,7 +105,6 @@ public class Main {
                 }
             }
 
-            // --- 4. CRIA 5 PROCESSOS AVALIATIVOS ---
             List<ProcessoAvaliativo> processos = processoDAO.listar();
             if (processos.isEmpty()) {
                 System.out.println("-> Criando 5 Processos Avaliativos...");
@@ -138,12 +119,9 @@ public class Main {
                 }
             }
 
-            // --- 5. CRIA 10 DISCIPLINAS ---
             List<Disciplina> disciplinas = disciplinaDAO.listar();
             if (disciplinas.isEmpty()) {
                 System.out.println("-> Criando 10 Disciplinas...");
-                // (c1 = CC, c2 = Eng. Soft, c3 = SI, c4 = ADS, c5 = Redes)
-                // Precisamos recarregar os cursos do DAO para evitar LazyInitialization
                 Curso c1 = cursoDAO.listar().stream().filter(c -> c.getNome().equals("Ciência da Computação")).findFirst().get();
                 Curso c2 = cursoDAO.listar().stream().filter(c -> c.getNome().equals("Engenharia de Software")).findFirst().get();
                 Curso c3 = cursoDAO.listar().stream().filter(c -> c.getNome().equals("Sistemas de Informação")).findFirst().get();
@@ -166,10 +144,8 @@ public class Main {
                 }
             }
 
-            // --- 6. CRIA 7 TURMAS ---
             if (turmaDAO.listar().isEmpty()) {
                 System.out.println("-> Criando 7 Turmas...");
-                 // Recarrega disciplinas para evitar LazyInitialization
                 Disciplina d1 = disciplinaDAO.listar().stream().filter(d -> d.getNome().equals("Programação I")).findFirst().get();
                 Disciplina d2 = disciplinaDAO.listar().stream().filter(d -> d.getNome().equals("Banco de Dados")).findFirst().get();
                 Disciplina d3 = disciplinaDAO.listar().stream().filter(d -> d.getNome().equals("Engenharia de Software I")).findFirst().get();
@@ -178,48 +154,40 @@ public class Main {
                 Disciplina d6 = disciplinaDAO.listar().stream().filter(d -> d.getNome().equals("Programação Web")).findFirst().get();
                 Disciplina d7 = disciplinaDAO.listar().stream().filter(d -> d.getNome().equals("Lógica de Programação")).findFirst().get();
 
-
-                // Turma 1 (Prog I)
                 Turma t1 = new Turma("2024/2", d1);
-                t1.getProfessores().add(prof1); // Prof. Carlos
-                t1.getAlunos().addAll(Set.of(alunos[0], alunos[1], alunos[2], alunos[3], alunos[4])); // 5 alunos
+                t1.getProfessores().add(prof1);
+                t1.getAlunos().addAll(Set.of(alunos[0], alunos[1], alunos[2], alunos[3], alunos[4]));
                 turmaDAO.salvar(t1);
 
-                // Turma 2 (Banco de Dados)
                 Turma t2 = new Turma("2024/2", d2);
-                t2.getProfessores().add(prof2); // Prof. Ana
-                t2.getAlunos().addAll(Set.of(alunos[5], alunos[6], alunos[7])); // 3 alunos
+                t2.getProfessores().add(prof2);
+                t2.getAlunos().addAll(Set.of(alunos[5], alunos[6], alunos[7]));
                 turmaDAO.salvar(t2);
 
-                // Turma 3 (Eng. Soft I)
                 Turma t3 = new Turma("2024/2", d3);
-                t3.getProfessores().add(prof1); // Prof. Carlos
-                t3.getProfessores().add(prof3); // Prof. Beatriz (2 profs)
-                t3.getAlunos().addAll(Set.of(alunos[0], alunos[2], alunos[4], alunos[6], alunos[8])); // 5 alunos
+                t3.getProfessores().add(prof1);
+                t3.getProfessores().add(prof3);
+                t3.getAlunos().addAll(Set.of(alunos[0], alunos[2], alunos[4], alunos[6], alunos[8]));
                 turmaDAO.salvar(t3);
 
-                // Turma 4 (Requisitos)
                 Turma t4 = new Turma("2024/2", d4);
-                t4.getProfessores().add(prof3); // Prof. Beatriz
-                t4.getAlunos().addAll(Set.of(alunos[1], alunos[3], alunos[5], alunos[7], alunos[9])); // 5 alunos
+                t4.getProfessores().add(prof3);
+                t4.getAlunos().addAll(Set.of(alunos[1], alunos[3], alunos[5], alunos[7], alunos[9]));
                 turmaDAO.salvar(t4);
-                
-                // Turma 5 (Gestão de Projetos)
+
                 Turma t5 = new Turma("2024/2", d5);
-                t5.getProfessores().add(prof2); // Prof. Ana
-                t5.getAlunos().addAll(Set.of(alunos[10], alunos[11], alunos[12])); // 3 alunos
+                t5.getProfessores().add(prof2);
+                t5.getAlunos().addAll(Set.of(alunos[10], alunos[11], alunos[12]));
                 turmaDAO.salvar(t5);
 
-                // Turma 6 (Prog Web)
                 Turma t6 = new Turma("2024/2", d6);
-                t6.getProfessores().add(prof1); // Prof. Carlos
-                t6.getAlunos().addAll(Set.of(alunos[13], alunos[14], alunos[0])); // 3 alunos
+                t6.getProfessores().add(prof1);
+                t6.getAlunos().addAll(Set.of(alunos[13], alunos[14], alunos[0]));
                 turmaDAO.salvar(t6);
 
-                // Turma 7 (Lógica)
                 Turma t7 = new Turma("2024/2", d7);
-                t7.getProfessores().add(prof3); // Prof. Beatriz
-                t7.getAlunos().addAll(Set.of(alunos[1], alunos[4], alunos[9], alunos[12], alunos[14])); // 5 alunos
+                t7.getProfessores().add(prof3);
+                t7.getAlunos().addAll(Set.of(alunos[1], alunos[4], alunos[9], alunos[12], alunos[14]));
                 turmaDAO.salvar(t7);
             }
             
@@ -231,9 +199,6 @@ public class Main {
         }
     }
 
-    /**
-     * Lista os dados principais para verificar se foram inseridos.
-     */
     private static void testarListagem() {
         System.out.println("\n--- VERIFICANDO DADOS NO BANCO ---");
 
@@ -250,7 +215,6 @@ public class Main {
         new UsuarioDAO().listar().forEach(u -> System.out.println("-> " + u.getNome() + " (Perfil: " + u.getPerfil().getNome() + ")"));
 
         System.out.println("\nTurmas:");
-        // --- ESTA É A PARTE CORRIGIDA ---
         new TurmaDAO().listar().forEach(t -> {
             System.out.println("-> Disciplina: " + t.getDisciplina().getNome() + " | Alunos: " + t.getAlunos().size());
         });

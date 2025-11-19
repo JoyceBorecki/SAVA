@@ -67,8 +67,6 @@ public class FormularioServlet extends HttpServlet {
         }
     }
 
-    // --- Métodos de CRUD de Formulário ---
-
     private void listarFormularios(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         List<Formulario> lista = formularioDAO.listar();
@@ -169,16 +167,12 @@ public class FormularioServlet extends HttpServlet {
         resp.sendRedirect("formularios?action=listar");
     }
 
-    // --- NOVOS MÉTODOS PARA GERENCIAR QUESTÕES ---
-
     private void mostrarGerenciadorQuestoes(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         int formularioId = Integer.parseInt(req.getParameter("id"));
-        
-        // CORRIGIDO: Usa o novo método do DAO para evitar Lazy Load e carregar tudo
+
         Formulario formulario = formularioDAO.buscarPorIdComQuestoes(formularioId); 
-        
-        // As Questões e Alternativas são carregadas pelo método acima (FETCH JOIN)
+
         req.setAttribute("formulario", formulario);
         req.setAttribute("questoes", formulario.getQuestoes()); 
         
@@ -196,15 +190,11 @@ public class FormularioServlet extends HttpServlet {
         Formulario formulario = formularioDAO.buscarPorId(formularioId);
         Questao.TipoQuestao tipo = Questao.TipoQuestao.valueOf(tipoStr);
 
-        // 1. Salva a Questão primeiro
         Questao questao = new Questao(enunciado, obrigatoria, tipo, formulario);
         questaoDAO.salvar(questao);
 
-        // 2. Verifica se vieram alternativas no formulário (Novidade)
-        // O campo no HTML terá o nome "novasAlternativas"
         String[] alternativas = req.getParameterValues("novasAlternativas");
-        
-        // Só salvamos alternativas se o tipo for compatível e se houver dados
+
         if (alternativas != null && (tipo == Questao.TipoQuestao.UNICA || tipo == Questao.TipoQuestao.MULTIPLA)) {
             for (String textoAlt : alternativas) {
                 if (textoAlt != null && !textoAlt.trim().isEmpty()) {

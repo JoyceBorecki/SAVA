@@ -43,7 +43,6 @@ public class DisciplinaServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        // O POST sempre salva (novo ou atualização)
         salvarDisciplina(req, resp);
     }
 
@@ -51,8 +50,7 @@ public class DisciplinaServlet extends HttpServlet {
             throws ServletException, IOException {
         List<Disciplina> lista = disciplinaDAO.listar();
         req.setAttribute("disciplinas", lista);
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/disciplina/lista.jsp");
         dispatcher.forward(req, resp);
     }
@@ -62,8 +60,7 @@ public class DisciplinaServlet extends HttpServlet {
         List<Curso> cursos = cursoDAO.listar();
         req.setAttribute("disciplina", new Disciplina()); 
         req.setAttribute("cursos", cursos); 
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/disciplina/form.jsp");
         dispatcher.forward(req, resp);
     }
@@ -76,24 +73,20 @@ public class DisciplinaServlet extends HttpServlet {
 
         req.setAttribute("disciplina", disciplina); 
         req.setAttribute("cursos", cursos); 
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/disciplina/form.jsp");
         dispatcher.forward(req, resp);
     }
 
     private void salvarDisciplina(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        // Coleta dados do formulário
         String idParam = req.getParameter("id");
         String nome = req.getParameter("nome");
         String semestre = req.getParameter("semestre");
         int cursoId = Integer.parseInt(req.getParameter("cursoId"));
 
-        // Busca o objeto Curso completo
         Curso curso = cursoDAO.buscarPorId(cursoId);
-        
-        // Cria ou atualiza o objeto Disciplina
+
         Disciplina disciplina = new Disciplina(nome, semestre, curso);
         if (idParam != null && !idParam.isEmpty()) {
             disciplina.setId(Integer.parseInt(idParam));

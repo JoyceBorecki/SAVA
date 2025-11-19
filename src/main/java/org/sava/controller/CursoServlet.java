@@ -46,8 +46,7 @@ public class CursoServlet extends HttpServlet {
             throws ServletException, IOException {
         List<Curso> lista = cursoDAO.listar();
         req.setAttribute("cursos", lista);
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/curso/lista.jsp");
         dispatcher.forward(req, resp);
     }
@@ -55,8 +54,7 @@ public class CursoServlet extends HttpServlet {
     private void mostrarFormularioNovo(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.setAttribute("curso", new Curso());
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/curso/form.jsp");
         dispatcher.forward(req, resp);
     }
@@ -66,8 +64,7 @@ public class CursoServlet extends HttpServlet {
         int id = Integer.parseInt(req.getParameter("id"));
         Curso curso = cursoDAO.buscarPorId(id);
         req.setAttribute("curso", curso);
-        
-        // --- CAMINHO CORRIGIDO ---
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/curso/form.jsp");
         dispatcher.forward(req, resp);
     }
@@ -83,7 +80,6 @@ public class CursoServlet extends HttpServlet {
             curso.setId(Integer.parseInt(idParam));
         }
 
-        // Se você não tiver um salvarOuAtualizar() no DAO, esta lógica funciona.
         if (curso.getId() > 0) {
             cursoDAO.atualizar(curso);
         } else {

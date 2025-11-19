@@ -23,7 +23,6 @@ public class AuthFilter implements Filter {
 
         Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuarioLogado") : null;
 
-        // Rotas públicas
         boolean rotaPublica =
                 path.endsWith("login") ||
                     path.contains("/assets/") ||
@@ -35,7 +34,6 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // Não logado -> manda pro login
         if (usuario == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
@@ -43,42 +41,36 @@ public class AuthFilter implements Filter {
 
         String role = usuario.getPerfil().getNome();
 
-        // ADMINISTRADOR   (somente ele pode /usuarios)
         if (path.contains("/usuarios") && !role.equals("Administrador")) {
             req.setAttribute("mensagem403", "Apenas administradores podem acessar esta área.");
             req.getRequestDispatcher("/WEB-INF/views/erro/403.jsp").forward(req, resp);
             return;
         }
 
-        // ADMINISTRADOR ou COORDENADOR → /cursos
         if (path.contains("/cursos") && !(role.equals("Administrador") || role.equals("Coordenador"))) {
             req.setAttribute("mensagem403", "Acesso restrito a administradores e coordenadores.");
             req.getRequestDispatcher("/WEB-INF/views/erro/403.jsp").forward(req, resp);
             return;
         }
 
-        // ADMINISTRADOR ou COORDENADOR → /disciplinas
         if (path.contains("/disciplinas") && !(role.equals("Administrador") || role.equals("Coordenador"))) {
             req.setAttribute("mensagem403", "Acesso restrito a administradores e coordenadores.");
             req.getRequestDispatcher("/WEB-INF/views/erro/403.jsp").forward(req, resp);
             return;
         }
 
-        // ADMINISTRADOR / COORDENADOR / PROFESSOR → /turmas
         if (path.contains("/turmas") && !(role.equals("Administrador") || role.equals("Coordenador") || role.equals("Professor"))) {
             req.setAttribute("mensagem403", "Acesso permitido apenas para administradores, coordenadores e professores.");
             req.getRequestDispatcher("/WEB-INF/views/erro/403.jsp").forward(req, resp);
             return;
         }
 
-        // ADMINISTRADOR / COORDENADOR → /processos
         if (path.contains("/processos") && !(role.equals("Administrador") || role.equals("Coordenador"))) {
             req.setAttribute("mensagem403", "Acesso permitido apenas para administradores e coordenadores.");
             req.getRequestDispatcher("/WEB-INF/views/erro/403.jsp").forward(req, resp);
             return;
         }
 
-        // FORMULÁRIOS → proibido para professor e aluno
         if (path.contains("/formularios")) {
             if (role.equals("Professor") || role.equals("Aluno")) {
                 req.setAttribute("mensagem403", "Seu perfil não permite acessar formulários.");

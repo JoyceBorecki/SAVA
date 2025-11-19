@@ -7,10 +7,8 @@ public class EstatisticaQuestao {
     private String enunciado;
     private String tipo;
     private int totalRespostas;
-    // Mapa: "Texto da Alternativa" -> Quantidade de votos
     private Map<String, Long> contagemAlternativas = new HashMap<>();
-    // Lista de respostas textuais (para questões abertas)
-    private Map<String, String> respostasAbertas = new HashMap<>(); // Aluno -> Texto
+    private Map<String, String> respostasAbertas = new HashMap<>();
 
     public EstatisticaQuestao(String enunciado, String tipo) {
         this.enunciado = enunciado;
@@ -27,14 +25,12 @@ public class EstatisticaQuestao {
         this.totalRespostas++;
     }
 
-    // Getters
     public String getEnunciado() { return enunciado; }
     public String getTipo() { return tipo; }
     public int getTotalRespostas() { return totalRespostas; }
     public Map<String, Long> getContagemAlternativas() { return contagemAlternativas; }
     public Map<String, String> getRespostasAbertas() { return respostasAbertas; }
 
-    // Método auxiliar para calcular porcentagem na JSP
     public int getPorcentagem(String alternativa) {
         if (totalRespostas == 0) return 0;
         long votos = contagemAlternativas.getOrDefault(alternativa, 0L);
